@@ -23,6 +23,7 @@ class LoginFormT extends StatefulWidget {
 }
 
 class _LoginFormTState extends State<LoginFormT> {
+  bool isPasswordVisible = false;
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -69,15 +70,29 @@ class _LoginFormTState extends State<LoginFormT> {
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               hintText: "Enter email",
-              prefixIcon: Image.asset(email),
+              hintStyle: TextStyle(color: Colors.grey),
+              prefixIcon: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Image.asset(email),
+              ),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white, width: 2),
               ),
             ),
           ),
         ),
+
         SizedBox(height: 15),
         SizedBox(
           width: width * 0.3,
@@ -91,15 +106,36 @@ class _LoginFormTState extends State<LoginFormT> {
           width: width * 0.3,
           child: TextField(
             controller: widget.passwordController,
-            obscureText: true,
+            obscureText: isPasswordVisible,
             style: const TextStyle(color: Colors.black),
             decoration: InputDecoration(
               hintText: "Enter password",
-              prefixIcon: Image.asset(user),
+              hintStyle: TextStyle(color: Colors.grey),
+              prefixIcon: Image.asset(lock),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    isPasswordVisible = !isPasswordVisible;
+                  });
+                },
+              ),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white, width: 2),
               ),
             ),
           ),

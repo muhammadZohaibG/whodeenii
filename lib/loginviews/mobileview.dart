@@ -23,6 +23,7 @@ class LoginFormM extends StatefulWidget {
 }
 
 class _LoginFormMState extends State<LoginFormM> {
+  bool isPasswordVisible = false;
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -38,7 +39,7 @@ class _LoginFormMState extends State<LoginFormM> {
           "Login",
           style: TextStyle(
             color: AppColors.blackColor,
-            fontSize: 22,
+            fontSize: width * 0.04,
             fontWeight: FontWeight.bold,
             fontFamily: 'Roboto',
           ),
@@ -69,11 +70,21 @@ class _LoginFormMState extends State<LoginFormM> {
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               hintText: "Enter email",
+              hintStyle: TextStyle(color: Colors.grey),
               prefixIcon: Image.asset(email),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white, width: 2),
               ),
             ),
           ),
@@ -91,15 +102,36 @@ class _LoginFormMState extends State<LoginFormM> {
           width: width * 0.65,
           child: TextField(
             controller: widget.passwordController,
-            obscureText: true,
+            obscureText: isPasswordVisible,
             style: const TextStyle(color: Colors.black),
             decoration: InputDecoration(
               hintText: "Enter password",
-              prefixIcon: Image.asset(user),
+              hintStyle: TextStyle(color: Colors.grey),
+              prefixIcon: Image.asset(lock),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    isPasswordVisible = !isPasswordVisible;
+                  });
+                },
+              ),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Colors.white, width: 2),
               ),
             ),
           ),

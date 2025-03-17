@@ -1,9 +1,7 @@
 import 'package:emsmeraki/loginviews/mobileview.dart';
 import 'package:emsmeraki/loginviews/tabview.dart';
 import 'package:flutter/material.dart';
-import 'package:emsmeraki/utils/colors.dart';
 import 'package:emsmeraki/utils/images.dart';
-import 'package:emsmeraki/utils/values.dart';
 import 'package:emsmeraki/views/welcome.dart';
 
 class LoginPage extends StatefulWidget {
