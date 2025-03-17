@@ -12,3 +12,4 @@ const regdetails =
     'Welcome to the Digital Registration Process. You will be required to update or fulfill the details.';
 const scanqr =
     'You scan QR code to register on your own device. You will be taken to registration link.';
+const loginline = "Please enter you credentials to login";

@@ -1,5 +1,5 @@
 import 'package:device_preview/device_preview.dart';
-import 'package:emsmeraki/views/welcome.dart';
+import 'package:emsmeraki/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Whodeenii',
-      home: const WelcomeReg(),
+      home: const LoginPage(),
     );
   }
 }

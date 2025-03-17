@@ -46,7 +46,10 @@ class _WelcomeRegState extends State<WelcomeReg> {
               height: height,
               width: width,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.85),
+                image: DecorationImage(
+                  image: AssetImage(homewhite),
+                  fit: BoxFit.cover,
+                ),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(

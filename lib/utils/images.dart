@@ -32,3 +32,5 @@ const claass = "assets/icons/class.png";
 const splash = "assets/icons/splash.png";
 const favr = "assets/icons/favr.png";
 const qrcode = "assets/images/qrcode.png";
+const loginwhite = "assets/images/loginwhite.png";
+const homewhite = "assets/images/fairwhite.png";
