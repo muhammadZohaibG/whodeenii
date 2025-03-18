@@ -1,8 +1,8 @@
-import 'package:emsmeraki/loginviews/mobileview.dart';
-import 'package:emsmeraki/loginviews/tabview.dart';
+import 'package:whodeenii/loginviews/mobileview.dart';
+import 'package:whodeenii/loginviews/tabview.dart';
 import 'package:flutter/material.dart';
-import 'package:emsmeraki/utils/images.dart';
-import 'package:emsmeraki/views/welcome.dart';
+import 'package:whodeenii/utils/images.dart';
+import 'package:whodeenii/views/welcome.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -33,9 +33,6 @@ class _LoginPageState extends State<LoginPage> {
       body: Stack(
         children: [
           Positioned.fill(child: Image.asset(bgimage, fit: BoxFit.cover)),
-          Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.3)),
-          ),
           Center(
             child: Padding(
               padding: EdgeInsets.all(width * 0.03),
@@ -44,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
                 width: width,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(homewhite),
+                    image: AssetImage(loginwhite),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(20),

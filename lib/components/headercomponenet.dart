@@ -1,5 +1,5 @@
-import 'package:emsmeraki/utils/colors.dart';
-import 'package:emsmeraki/utils/sizeconf.dart';
+import 'package:whodeenii/utils/colors.dart';
+import 'package:whodeenii/utils/sizeconf.dart';
 import 'package:flutter/material.dart';
 
 class HeaderComponent extends StatelessWidget {

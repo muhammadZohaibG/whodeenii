@@ -1,8 +1,8 @@
-import 'package:emsmeraki/guestselection/guestmodal.dart';
-import 'package:emsmeraki/utils/colors.dart';
-import 'package:emsmeraki/utils/images.dart';
-import 'package:emsmeraki/utils/sizeconf.dart';
-import 'package:emsmeraki/utils/values.dart';
+import 'package:whodeenii/guestselection/guestmodal.dart';
+import 'package:whodeenii/utils/colors.dart';
+import 'package:whodeenii/utils/images.dart';
+import 'package:whodeenii/utils/sizeconf.dart';
+import 'package:whodeenii/utils/values.dart';
 import 'package:flutter/material.dart';
 
 class GuestSelection extends StatefulWidget {

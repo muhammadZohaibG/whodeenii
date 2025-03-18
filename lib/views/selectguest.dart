@@ -1,15 +1,11 @@
-import 'package:emsmeraki/completereservation/mobileview.dart';
-import 'package:emsmeraki/components/headercomponenet.dart';
-import 'package:emsmeraki/components/mainbuttoncomponent.dart';
-import 'package:emsmeraki/components/mobHeaderComponent.dart';
-import 'package:emsmeraki/components/startcomponent.dart';
-import 'package:emsmeraki/guestselection/mobileview.dart';
-import 'package:emsmeraki/guestselection/tabview.dart';
-import 'package:emsmeraki/utils/colors.dart';
-import 'package:emsmeraki/utils/images.dart';
-import 'package:emsmeraki/utils/values.dart';
-import 'package:emsmeraki/views/registrationcompleted.dart';
-import 'package:emsmeraki/views/singatureregistration.dart';
+import 'package:whodeenii/components/mainbuttoncomponent.dart';
+import 'package:whodeenii/components/startcomponent.dart';
+import 'package:whodeenii/guestselection/mobileview.dart';
+import 'package:whodeenii/guestselection/tabview.dart';
+import 'package:whodeenii/utils/colors.dart';
+import 'package:whodeenii/utils/images.dart';
+import 'package:whodeenii/views/registrationcompleted.dart';
+import 'package:whodeenii/views/singatureregistration.dart';
 import 'package:flutter/material.dart';
 
 class SelectGuest extends StatefulWidget {

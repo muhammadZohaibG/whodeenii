@@ -1,12 +1,12 @@
-import 'package:emsmeraki/components/custombuttoncomponent.dart';
-import 'package:emsmeraki/components/headercomponenet.dart';
-import 'package:emsmeraki/components/mainbuttoncomponent.dart';
-import 'package:emsmeraki/components/mobHeaderComponent.dart';
-import 'package:emsmeraki/utils/colors.dart';
-import 'package:emsmeraki/utils/images.dart';
-import 'package:emsmeraki/utils/values.dart';
-import 'package:emsmeraki/views/profileDetail.dart';
-import 'package:emsmeraki/views/singatureregistration.dart';
+import 'package:whodeenii/components/custombuttoncomponent.dart';
+import 'package:whodeenii/components/headercomponenet.dart';
+import 'package:whodeenii/components/mainbuttoncomponent.dart';
+import 'package:whodeenii/components/mobHeaderComponent.dart';
+import 'package:whodeenii/utils/colors.dart';
+import 'package:whodeenii/utils/images.dart';
+import 'package:whodeenii/utils/values.dart';
+import 'package:whodeenii/views/profileDetail.dart';
+import 'package:whodeenii/views/singatureregistration.dart';
 import 'package:flutter/material.dart';
 
 class CaptureDocuments extends StatefulWidget {

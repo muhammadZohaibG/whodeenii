@@ -1,14 +1,14 @@
-// import 'package:emsmeraki/views/mobileview.dart';
-// import 'package:emsmeraki/views/tabletview.dart';
-import 'package:emsmeraki/components/headercomponenet.dart';
-import 'package:emsmeraki/components/mainbuttoncomponent.dart';
-import 'package:emsmeraki/components/mobHeaderComponent.dart';
-import 'package:emsmeraki/models/usersdetailsform.dart';
-import 'package:emsmeraki/utils/colors.dart';
-import 'package:emsmeraki/utils/images.dart';
-import 'package:emsmeraki/models/mobileview.dart';
-import 'package:emsmeraki/utils/values.dart';
-import 'package:emsmeraki/views/capturedocuments.dart';
+// import 'package:whodeenii/views/mobileview.dart';
+// import 'package:whodeenii/views/tabletview.dart';
+import 'package:whodeenii/components/headercomponenet.dart';
+import 'package:whodeenii/components/mainbuttoncomponent.dart';
+import 'package:whodeenii/components/mobHeaderComponent.dart';
+import 'package:whodeenii/models/usersdetailsform.dart';
+import 'package:whodeenii/utils/colors.dart';
+import 'package:whodeenii/utils/images.dart';
+import 'package:whodeenii/models/mobileview.dart';
+import 'package:whodeenii/utils/values.dart';
+import 'package:whodeenii/views/capturedocuments.dart';
 import 'package:flutter/material.dart';
 
 class ProfileDetail extends StatefulWidget {

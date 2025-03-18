@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:emsmeraki/utils/colors.dart';
+import 'package:whodeenii/utils/colors.dart';
 
 class WelcomeTextWidget extends StatelessWidget {
   final String title;

@@ -1,5 +1,5 @@
 import 'package:device_preview/device_preview.dart';
-import 'package:emsmeraki/views/login.dart';
+import 'package:whodeenii/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

@@ -1,11 +1,11 @@
-import 'package:emsmeraki/components/confirmbuttoncomp.dart';
-import 'package:emsmeraki/components/confirmtextcomponent.dart';
-import 'package:emsmeraki/components/startcomponent.dart';
-import 'package:emsmeraki/components/textcomponent.dart';
-import 'package:emsmeraki/utils/colors.dart';
-import 'package:emsmeraki/utils/images.dart';
-import 'package:emsmeraki/utils/values.dart';
-import 'package:emsmeraki/views/profileDetail.dart';
+import 'package:whodeenii/components/confirmbuttoncomp.dart';
+import 'package:whodeenii/components/confirmtextcomponent.dart';
+import 'package:whodeenii/components/startcomponent.dart';
+import 'package:whodeenii/components/textcomponent.dart';
+import 'package:whodeenii/utils/colors.dart';
+import 'package:whodeenii/utils/images.dart';
+import 'package:whodeenii/utils/values.dart';
+import 'package:whodeenii/views/profileDetail.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeReg extends StatefulWidget {

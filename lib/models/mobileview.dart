@@ -1,5 +1,5 @@
-import 'package:emsmeraki/utils/images.dart';
-import 'package:emsmeraki/utils/sizeconf.dart';
+import 'package:whodeenii/utils/images.dart';
+import 'package:whodeenii/utils/sizeconf.dart';
 import 'package:flutter/material.dart';
 import 'package:show_country_picker_flutter/show_country_picker_flutter.dart';
 

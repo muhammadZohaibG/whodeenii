@@ -12,9 +12,18 @@ class AppColors {
   static Color whiteColor = const Color(0xffffffff);
   static Color fieldColor = const Color(0xFFECEDF2);
   static Color orangeColor = const Color(0xFFFFA500);
+  static Color orange38 = const Color(0xFFF68F38);
+  static Color pink68 = const Color(0xFFF03668);
+  static Color pinkColor = const Color(0xFFFF1493);
+  static Color gray4959 = const Color(0xFF3D4959);
 
   static LinearGradient gradientColor = const LinearGradient(
     colors: [Color(0xFFFFA500), Color(0xFFFF1493)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  static LinearGradient gradientdarkColor = const LinearGradient(
+    colors: [Color(0xFFF68F38), Color(0xFFF03668)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

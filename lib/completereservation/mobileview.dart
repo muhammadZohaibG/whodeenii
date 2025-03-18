@@ -1,6 +1,6 @@
-import 'package:emsmeraki/components/custombuttoncomponent.dart';
-import 'package:emsmeraki/utils/colors.dart';
-import 'package:emsmeraki/utils/sizeconf.dart';
+import 'package:whodeenii/components/custombuttoncomponent.dart';
+import 'package:whodeenii/utils/colors.dart';
+import 'package:whodeenii/utils/sizeconf.dart';
 import 'package:flutter/material.dart';
 
 class ReservationDone extends StatefulWidget {

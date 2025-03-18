@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "emsmeraki" "\0"
+            VALUE "FileDescription", "whodeenii" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "emsmeraki" "\0"
+            VALUE "InternalName", "whodeenii" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "emsmeraki.exe" "\0"
-            VALUE "ProductName", "emsmeraki" "\0"
+            VALUE "OriginalFilename", "whodeenii.exe" "\0"
+            VALUE "ProductName", "whodeenii" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
