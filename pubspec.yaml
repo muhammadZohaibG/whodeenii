@@ -30,6 +30,9 @@ environment:
 dependencies:
   device_preview: ^1.2.0
   video_player: ^2.9.3
+  webview_flutter: ^4.10.0
+  connectivity_plus: ^6.1.3
+  vimeo_video_player: ^1.0.1
   show_country_picker_flutter: ^1.0.0
   flutter:
     sdk: flutter
