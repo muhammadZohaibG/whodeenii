@@ -2,7 +2,7 @@ import 'package:whodeenii/loginviews/mobileview.dart';
 import 'package:whodeenii/loginviews/tabview.dart';
 import 'package:flutter/material.dart';
 import 'package:whodeenii/utils/images.dart';
-import 'package:whodeenii/views/video_screen.dart';
+import 'package:whodeenii/views/videoscreen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

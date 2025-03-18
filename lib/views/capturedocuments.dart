@@ -5,7 +5,7 @@ import 'package:whodeenii/components/mobHeaderComponent.dart';
 import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/utils/values.dart';
-import 'package:whodeenii/views/profileDetail.dart';
+import 'package:whodeenii/views/profiledetail.dart';
 import 'package:whodeenii/views/singatureregistration.dart';
 import 'package:flutter/material.dart';
 
