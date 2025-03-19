@@ -58,7 +58,6 @@ class _VideoScreenState extends State<VideoScreen> {
           results.contains(ConnectivityResult.mobile) ||
           results.contains(ConnectivityResult.wifi);
     });
-    print(results);
   }
 
   void listenToInternetChanges() {
@@ -76,12 +75,9 @@ class _VideoScreenState extends State<VideoScreen> {
           isConnected = hasConnection;
         });
       }
-
-      print("Internet Status Changed: $isConnected");
     });
 
     Timer.periodic(const Duration(seconds: 1), (timer) async {
-      print("running");
       var results = await Connectivity().checkConnectivity();
       bool currentlyConnected =
           results.contains(ConnectivityResult.mobile) ||
@@ -92,8 +88,6 @@ class _VideoScreenState extends State<VideoScreen> {
           isConnected = currentlyConnected;
         });
       }
-
-      print("Periodic Internet Check: $isConnected");
     });
   }
 
@@ -117,6 +111,8 @@ class _VideoScreenState extends State<VideoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -136,43 +132,41 @@ class _VideoScreenState extends State<VideoScreen> {
                 ),
               )
             else
-              VimeoVideoPlayer(
-                videoId: '786241143',
-                isAutoPlay: true,
-                isMuted: true,
-                isLooping: true,
-                showControls: false,
-                onInAppWebViewCreated: (controller) {
-                  webViewController = controller;
-                },
-                onInAppWebViewLoadStart: (controller, url) {
-                  setState(() {
-                    isVideoLoading = false;
-                  });
-                },
-                onInAppWebViewLoadStop: (controller, url) {
-                  setState(() {
-                    isVideoLoading = true;
-                  });
-                },
-              ),
-            Positioned.fill(
-              child: GestureDetector(
+              GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onPanDown: (_) {
-                  print("User interacted, resetting inactivity timer.");
-                  startInactivityTimer();
-                },
                 onTap: () {
-                  print("User tapped, navigating to WelcomeReg.");
-                  inactivityTimer?.cancel();
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => WelcomeReg()),
                   );
                 },
+                child: IgnorePointer(
+                  child: SizedBox(
+                    width: width,
+                    height: height,
+                    child: VimeoVideoPlayer(
+                      videoId: '786241143',
+                      isAutoPlay: true,
+                      isMuted: true,
+                      isLooping: true,
+                      showControls: false,
+                      onInAppWebViewCreated: (controller) {
+                        webViewController = controller;
+                      },
+                      onInAppWebViewLoadStart: (controller, url) {
+                        setState(() {
+                          isVideoLoading = false;
+                        });
+                      },
+                      onInAppWebViewLoadStop: (controller, url) {
+                        setState(() {
+                          isVideoLoading = true;
+                        });
+                      },
+                    ),
+                  ),
+                ),
               ),
-            ),
             if (isVideoLoading && isConnected)
               const Center(child: CircularProgressIndicator()),
           ],
