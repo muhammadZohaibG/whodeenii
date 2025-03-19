@@ -54,85 +54,92 @@ class _ProfileDetailState extends State<ProfileDetail> {
         children: [
           Positioned.fill(child: Image.asset(bgimage, fit: BoxFit.cover)),
           Padding(
-            padding: EdgeInsets.all(width * 0.03),
+            padding: EdgeInsets.all(width * 0.025),
             child: Container(
               height: height,
               width: width,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.85),
-                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  image: AssetImage(homewhite),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.circular(15),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  isTablet
-                      ? HeaderComponent(
-                        lineLogo: logoline,
-                        poweredByLogo: logo,
-                        heading: "Profile Details",
-                        contentline: filldetails,
-                      )
-                      : MobHeaderComponent(
-                        lineLogo: logoline,
-                        farimontlogo: farimontlogo,
-                        heading: "Profile Details",
-                        contentline: filldetails,
-                      ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.all(width * 0.022),
-                        child:
-                            isTablet
-                                ? UserDetailsForm(
-                                  firstNameController: firstNameController,
-                                  lastNameController: lastNameController,
-                                  mobileController: mobileController,
-                                  emailController: emailController,
-                                  dobController: dobController,
-                                  onDialCodeChanged:
-                                      (value) => setState(
-                                        () => selectedDialCode = value,
-                                      ),
-                                  countryController: countryController,
-                                  onGenderChanged:
-                                      (value) => setState(
-                                        () => selectedGender = value,
-                                      ),
-                                )
-                                : MobileView(
-                                  firstNameController: firstNameController,
-                                  lastNameController: lastNameController,
-                                  mobileController: mobileController,
-                                  emailController: emailController,
-                                  dobController: dobController,
-                                  onDialCodeChanged:
-                                      (value) => setState(
-                                        () => selectedDialCode = value,
-                                      ),
-                                  countryController: countryController,
-                                  onGenderChanged:
-                                      (value) => setState(
-                                        () => selectedGender = value,
-                                      ),
-                                ),
+              child: Padding(
+                padding: EdgeInsets.all(width * 0.01),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    isTablet
+                        ? HeaderComponent(
+                          lineLogo: logoline,
+                          poweredByLogo: logo,
+                          heading: "Profile Details",
+                          contentline: filldetails,
+                        )
+                        : MobHeaderComponent(
+                          lineLogo: logoline,
+                          farimontlogo: farimontlogo,
+                          heading: "Profile Details",
+                          contentline: filldetails,
+                        ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.all(width * 0.022),
+                          child:
+                              isTablet
+                                  ? UserDetailsForm(
+                                    firstNameController: firstNameController,
+                                    lastNameController: lastNameController,
+                                    mobileController: mobileController,
+                                    emailController: emailController,
+                                    dobController: dobController,
+                                    onDialCodeChanged:
+                                        (value) => setState(
+                                          () => selectedDialCode = value,
+                                        ),
+                                    countryController: countryController,
+                                    onGenderChanged:
+                                        (value) => setState(
+                                          () => selectedGender = value,
+                                        ),
+                                  )
+                                  : MobileView(
+                                    firstNameController: firstNameController,
+                                    lastNameController: lastNameController,
+                                    mobileController: mobileController,
+                                    emailController: emailController,
+                                    dobController: dobController,
+                                    onDialCodeChanged:
+                                        (value) => setState(
+                                          () => selectedDialCode = value,
+                                        ),
+                                    countryController: countryController,
+                                    onGenderChanged:
+                                        (value) => setState(
+                                          () => selectedGender = value,
+                                        ),
+                                  ),
+                        ),
                       ),
                     ),
-                  ),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 20,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 20,
+                      ),
+                      child: MainButton(
+                        buttonText: 'Next',
+                        onPressed: handleSubmit,
+                        btnbg: AppColors.primaryColor,
+                        btnfg: AppColors.whiteColor,
+                      ),
                     ),
-                    child: MainButton(
-                      buttonText: 'Next',
-                      onPressed: handleSubmit,
-                      btnbg: AppColors.primaryColor,
-                      btnfg: AppColors.whiteColor,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

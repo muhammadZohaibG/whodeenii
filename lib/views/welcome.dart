@@ -43,7 +43,7 @@ class _WelcomeRegState extends State<WelcomeReg> {
             children: [
               Positioned.fill(child: Image.asset(bgimage, fit: BoxFit.cover)),
               Padding(
-                padding: EdgeInsets.all(width * 0.03),
+                padding: EdgeInsets.all(width * 0.025),
                 child: Container(
                   height: height,
                   width: width,
@@ -52,10 +52,10 @@ class _WelcomeRegState extends State<WelcomeReg> {
                       image: AssetImage(homewhite),
                       fit: BoxFit.cover,
                     ),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.all(width * 0.01),
+                    padding: EdgeInsets.all(width * 0.02),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -83,24 +83,38 @@ class _WelcomeRegState extends State<WelcomeReg> {
                                   )
                                   : ConfirmTextWidget(width: width),
                               SizedBox(height: height * 0.02),
-                              isloading
-                                  ? Column(
-                                    children: [
-                                      LinearProgressIndicator(
-                                        minHeight: 8,
-                                        backgroundColor: AppColors.gray300,
-                                        valueColor: AlwaysStoppedAnimation(
-                                          AppColors.primaryColor,
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: height * 0.015,
+                                ),
+                                child:
+                                    isloading
+                                        ? Column(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                left: width * 0.2,
+                                                right: width * 0.2,
+                                              ),
+                                              child: LinearProgressIndicator(
+                                                minHeight: 8,
+                                                backgroundColor:
+                                                    AppColors.gray300,
+                                                valueColor:
+                                                    AlwaysStoppedAnimation(
+                                                      AppColors.primaryColor,
+                                                    ),
+                                              ),
+                                            ),
+                                            SizedBox(height: height * 0.02),
+                                          ],
+                                        )
+                                        : ConfirmButton(
+                                          onPressed: onConfirmedPressed,
+                                          width: width,
+                                          height: height,
                                         ),
-                                      ),
-                                      SizedBox(height: height * 0.02),
-                                    ],
-                                  )
-                                  : ConfirmButton(
-                                    onPressed: onConfirmedPressed,
-                                    width: width,
-                                    height: height,
-                                  ),
+                              ),
                             ],
                           ),
                         ),

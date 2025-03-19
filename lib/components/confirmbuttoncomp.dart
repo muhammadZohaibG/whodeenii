@@ -20,11 +20,11 @@ class ConfirmButton extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: isTablet ? height * 0.01 : height * 0.02,
-          horizontal: isTablet ? width * 0.22 : width * 0.33,
+          vertical: isTablet ? height * 0.015 : height * 0.02,
+          horizontal: isTablet ? width * 0.15 : width * 0.33,
         ),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(09),
           color: AppColors.primaryColor,
         ),
         child: Text(
@@ -32,7 +32,7 @@ class ConfirmButton extends StatelessWidget {
           style: TextStyle(
             color: AppColors.whiteColor,
             fontWeight: FontWeight.bold,
-            fontSize: 16,
+            fontSize: 14,
           ),
           textAlign: TextAlign.center,
         ),

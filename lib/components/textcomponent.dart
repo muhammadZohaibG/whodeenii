@@ -25,17 +25,17 @@ class WelcomeTextWidget extends StatelessWidget {
             title,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: isTablet ? width * 0.03 : width * 0.05,
+              fontSize: isTablet ? width * 0.017 : width * 0.05,
               color: AppColors.blackColor,
             ),
           ),
           SizedBox(
-            width: isTablet ? width * 0.5 : width,
+            width: isTablet ? width * 0.42 : width,
             child: Text(
               description,
               style: TextStyle(
-                fontSize: isTablet ? width * 0.022 : width * 0.035,
-                color: AppColors.blackColor,
+                fontSize: isTablet ? width * 0.015 : width * 0.035,
+                color: AppColors.gray4959,
               ),
               textAlign: TextAlign.center,
             ),

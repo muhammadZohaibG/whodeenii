@@ -1,3 +1,4 @@
+import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/utils/sizeconf.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,10 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                   height: MySize.size25,
                   child: Text(
                     "First Name*",
-                    style: TextStyle(fontSize: MySize.size14),
+                    style: TextStyle(
+                      fontSize: MySize.size14,
+                      color: AppColors.blackColor,
+                    ),
                   ),
                 ),
                 SizedBox(

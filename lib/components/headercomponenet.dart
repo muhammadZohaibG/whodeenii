@@ -19,6 +19,7 @@ class HeaderComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
     MySize().init(context);
     return Padding(
       padding: EdgeInsets.only(left: width * 0.02, right: width * 0.02),
@@ -29,14 +30,14 @@ class HeaderComponent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset(lineLogo, width: width * 0.12),
+              Image.asset(lineLogo, width: width * 0.08, height: height * 0.03),
               Text(
                 heading,
                 style: TextStyle(
                   color: AppColors.blackColor,
-                  fontSize: MySize.size15,
+                  fontSize: width * 0.018,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Roboto',
+                  fontFamily: 'DM Sans',
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -44,18 +45,27 @@ class HeaderComponent extends StatelessWidget {
                 contentline,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Color(0xFF3D4959),
-                  fontSize: width * 0.018,
+                  color: AppColors.gray4959,
+                  fontSize: width * 0.012,
                   decoration: TextDecoration.none,
                 ),
               ),
             ],
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+
             children: [
-              Image.asset(poweredByLogo, width: width * 0.05),
-              const Text("Powered by"),
-              const Text("Whodeenii"),
+              Image.asset(poweredByLogo, width: width * 0.02),
+              Text("Powered by", style: TextStyle(fontSize: width * 0.009)),
+              Text(
+                "Whodeenii",
+                style: TextStyle(
+                  fontSize: width * 0.009,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ],

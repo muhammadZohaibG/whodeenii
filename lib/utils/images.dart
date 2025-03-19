@@ -12,6 +12,7 @@ const telephone = "assets/icons/telephone.png";
 const code = "assets/icons/code.png";
 const gender = "assets/icons/gender.png";
 const calendar = "assets/icons/calendar.png";
+const country = "assets/icons/country.png";
 const circle = "assets/icons/circle.png";
 const fav = "assets/icons/fav.png";
 const privacy = "assets/icons/privacy.png";
