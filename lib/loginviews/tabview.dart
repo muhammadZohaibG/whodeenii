@@ -7,6 +7,7 @@ class LoginFormT extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final bool rememberMe;
+  final bool isLoading;
   final Function(bool?) onRememberMeChanged;
   final VoidCallback onLoginPressed;
 
@@ -17,6 +18,7 @@ class LoginFormT extends StatefulWidget {
     required this.rememberMe,
     required this.onRememberMeChanged,
     required this.onLoginPressed,
+    required this.isLoading
   });
 
   @override
@@ -184,7 +186,9 @@ class _LoginFormTState extends State<LoginFormT> {
                 gradient: AppColors.gradientdarkColor,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: ElevatedButton(
+              child: widget.isLoading
+              ? Center(child: CircularProgressIndicator(color: Colors.orange))
+              :ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: AppColors.whiteColor,
                   backgroundColor: Colors.transparent,
@@ -193,7 +197,8 @@ class _LoginFormTState extends State<LoginFormT> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: widget.onLoginPressed,
+                onPressed:widget.onLoginPressed // Properly executing the Future
+                ,
                 child: const Text("Confirm"),
               ),
             ),

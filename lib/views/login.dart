@@ -1,8 +1,12 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 import 'package:whodeenii/loginviews/mobileview.dart';
 import 'package:whodeenii/loginviews/tabview.dart';
 import 'package:flutter/material.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/views/video_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,13 +20,77 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   bool isloading = false;
   bool rememberMe = false;
+  bool isLoading = false;
 
-  void loginfunc() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => VideoScreen()),
+Future<void> loginfunc() async {
+  print("*******************************************************************************");
+  setState(() {
+    isLoading = true;
+  });
+
+  final url = Uri.parse('http://localhost:5241/api/v1/Kiosk/authenticatekiosk');
+  final headers = {
+    'accept': 'application/json',
+    'Content-Type': 'application/json',
+  };
+  final body = jsonEncode({
+    'username': emailController.text,
+    'password': passwordController.text,
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: body,
+    );
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (response.statusCode == 200) {
+      // Parse the response
+      final responseData = jsonDecode(response.body);
+      final successResponse = responseData['successResponse'];
+
+      // Save data to Shared Preferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('id', successResponse['id']);
+      await prefs.setString('hotelId', successResponse['hotelId']);
+      await prefs.setString('kioskName', successResponse['kioskName']);
+      await prefs.setString('token', successResponse['token']);
+      await prefs.setString('logo', successResponse['logo']);
+
+      // Navigate to the next screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => VideoScreen()),
+      );
+    } else {
+      // Handle login failure
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed. Please try again.')),
+      );
+    }
+  } catch (e) {
+    // Handle network or other errors
+    setState(() {
+      isLoading = false;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('An error occurred: $e')),
     );
   }
+}
+
+
+  // void loginfunc() {
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => VideoScreen()),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                             });
                           },
                           onLoginPressed: loginfunc,
+                          isLoading: isLoading,
                         )
                         : LoginFormM(
                           emailController: emailController,
@@ -71,6 +140,8 @@ class _LoginPageState extends State<LoginPage> {
                           onLoginPressed: loginfunc,
                         ),
               ),
+   
+
             ),
           ),
         ],
