@@ -25,8 +25,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
+  final TextEditingController dialcodeController = TextEditingController();
 
-  String? selectedDialCode;
   String? selectedGender;
 
   void handleSubmit() {
@@ -35,8 +35,8 @@ class _ProfileDetailState extends State<ProfileDetail> {
     print("Mobile Number: ${mobileController.text}");
     print("Email Address: ${emailController.text}");
     print("Date of Birth: ${dobController.text}");
-    print("Dialing Code: $selectedDialCode");
-    print("Date of Birth: ${countryController.text}");
+    print("Dialing Code: ${dialcodeController.text}");
+    print("Country Name: ${countryController.text}");
     print("Gender: $selectedGender");
     Navigator.pushReplacement(
       context,
@@ -87,7 +87,12 @@ class _ProfileDetailState extends State<ProfileDetail> {
                     Expanded(
                       child: SingleChildScrollView(
                         child: Padding(
-                          padding: EdgeInsets.all(width * 0.022),
+                          padding: EdgeInsets.only(
+                            left: width * 0.02,
+                            bottom: width * 0.02,
+                            top: width * 0.01,
+                            right: width * 0.02,
+                          ),
                           child:
                               isTablet
                                   ? UserDetailsForm(
@@ -96,10 +101,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     mobileController: mobileController,
                                     emailController: emailController,
                                     dobController: dobController,
-                                    onDialCodeChanged:
-                                        (value) => setState(
-                                          () => selectedDialCode = value,
-                                        ),
+                                    onDialCodeChanged: dialcodeController,
                                     countryController: countryController,
                                     onGenderChanged:
                                         (value) => setState(
@@ -112,10 +114,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     mobileController: mobileController,
                                     emailController: emailController,
                                     dobController: dobController,
-                                    onDialCodeChanged:
-                                        (value) => setState(
-                                          () => selectedDialCode = value,
-                                        ),
+                                    onDialCodeChanged: dialcodeController,
                                     countryController: countryController,
                                     onGenderChanged:
                                         (value) => setState(

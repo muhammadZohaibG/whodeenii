@@ -25,16 +25,11 @@ class CustomButton extends StatelessWidget {
     MySize().init(context);
     return Container(
       width: width,
-      margin: EdgeInsets.symmetric(
-        horizontal: MySize.size20,
-        vertical: MySize.size7,
-      ),
+      height: height,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: btnbg,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
           padding: EdgeInsets.symmetric(vertical: MySize.size14),
         ),
         onPressed: onPressed,

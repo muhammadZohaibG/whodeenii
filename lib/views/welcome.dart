@@ -55,7 +55,7 @@ class _WelcomeRegState extends State<WelcomeReg> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Padding(
-                    padding: EdgeInsets.all(width * 0.02),
+                    padding: EdgeInsets.all(width * 0.013),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,

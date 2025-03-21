@@ -180,13 +180,16 @@ class _ReservationDoneState extends State<ReservationDone> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: width * 0.05),
-                  child: Text(
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: width * 0.025,
+                right: width * 0.025,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
                     "Primary Guest Name",
                     style: TextStyle(
                       color: AppColors.blackColor,
@@ -196,16 +199,16 @@ class _ReservationDoneState extends State<ReservationDone> {
                       decoration: TextDecoration.none,
                     ),
                   ),
-                ),
-                CustomButton(
-                  buttonText: "Update Now",
-                  onPressed: widget.onPressed,
-                  btnbg: AppColors.blackColor,
-                  btnfg: AppColors.whiteColor,
-                  height: height,
-                  width: width * 0.4,
-                ),
-              ],
+                  CustomButton(
+                    buttonText: "Update Now",
+                    onPressed: widget.onPressed,
+                    btnbg: AppColors.blackColor,
+                    btnfg: AppColors.whiteColor,
+                    height: height * 0.06,
+                    width: width * 0.2,
+                  ),
+                ],
+              ),
             ),
           ),
         ],

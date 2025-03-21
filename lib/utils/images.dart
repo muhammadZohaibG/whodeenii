@@ -36,3 +36,5 @@ const qrcode = "assets/images/qrcode.png";
 const loginwhite = "assets/images/loginwhite.png";
 const homewhite = "assets/images/fairwhite.png";
 const lock = "assets/icons/lock.png";
+const max = "assets/icons/max.png";
+const bin = "assets/icons/bin.png";

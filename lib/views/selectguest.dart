@@ -20,7 +20,7 @@ class _SelectGuestState extends State<SelectGuest> {
   void prevbutton() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => SignatueRegistration()),
+      MaterialPageRoute(builder: (context) => SignatureRegistration()),
     );
   }
 
@@ -57,18 +57,33 @@ class _SelectGuestState extends State<SelectGuest> {
               height: height,
               width: width,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.85),
-                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  image: AssetImage(homewhite),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.circular(15),
               ),
               child: Column(
                 children: [
-                  HeaderWidget(fairmontLogo: farimontlogo, poweredByLogo: logo),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: height * 0.02,
+                      right: width * 0.01,
+                      left: width * 0.01,
+                      bottom: height * 0.02,
+                    ),
+                    child: SizedBox(
+                      width: width,
+                      height: height * 0.1,
+                      child: HeaderWidget(
+                        fairmontLogo: farimontlogo,
+                        poweredByLogo: logo,
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.all(width * 0.022),
-                        child: isTablet ? GuestSelectionT() : GuestSelection(),
-                      ),
+                      child: isTablet ? GuestSelectionT() : GuestSelection(),
                     ),
                   ),
 

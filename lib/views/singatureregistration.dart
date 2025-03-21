@@ -1,21 +1,21 @@
 import 'package:whodeenii/components/headercomponenet.dart';
-import 'package:whodeenii/components/mainbuttoncomponent.dart';
 import 'package:whodeenii/components/mobHeaderComponent.dart';
-import 'package:whodeenii/utils/colors.dart';
+import 'package:whodeenii/signatureregistration/mobileview.dart';
+import 'package:whodeenii/signatureregistration/tabletview.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/utils/values.dart';
 import 'package:whodeenii/views/capturedocuments.dart';
 import 'package:whodeenii/views/registrationcompleted.dart';
 import 'package:flutter/material.dart';
 
-class SignatueRegistration extends StatefulWidget {
-  const SignatueRegistration({super.key});
+class SignatureRegistration extends StatefulWidget {
+  const SignatureRegistration({super.key});
 
   @override
-  State<SignatueRegistration> createState() => _SignatueRegistrationState();
+  State<SignatureRegistration> createState() => _SignatureRegistrationState();
 }
 
-class _SignatueRegistrationState extends State<SignatueRegistration> {
+class _SignatureRegistrationState extends State<SignatureRegistration> {
   void testsub() {}
   void prevbutton() {
     Navigator.pushReplacement(
@@ -30,8 +30,6 @@ class _SignatueRegistrationState extends State<SignatueRegistration> {
       MaterialPageRoute(builder: (context) => RegistrationCompleted()),
     );
   }
-
-  void handleSubmit() {}
 
   @override
   Widget build(BuildContext context) {
@@ -48,128 +46,37 @@ class _SignatueRegistrationState extends State<SignatueRegistration> {
               height: height,
               width: width,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.85),
-                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  image: AssetImage(homewhite),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.circular(15),
               ),
-              child: Column(
-                children: [
-                  isTablet
-                      ? HeaderComponent(
-                        lineLogo: line3,
-                        poweredByLogo: logo,
-                        heading: "Sign Registration Card",
-                        contentline: signdetails,
-                      )
-                      : MobHeaderComponent(
-                        lineLogo: line3,
-                        farimontlogo: farimontlogo,
-                        heading: "Sign Registration Card",
-                        contentline: signdetails,
-                      ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.all(width * 0.022),
-                        child: Column(
-                          children: [
-                            Text(
-                              "Place your ID doc in the middle of rectangle",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 15),
-                            GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                width: double.infinity,
-                                height: 150,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black54),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.camera_alt,
-                                      size: 40,
-                                      color: Colors.black54,
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      "Capture ID Doc",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 15),
-                            GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                width: double.infinity,
-                                height: 150,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black54),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.cloud_upload,
-                                      size: 40,
-                                      color: Colors.black54,
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      "Upload ID Card",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+              child: Padding(
+                padding: EdgeInsets.all(width * 0.01),
+                child: Column(
+                  children: [
+                    isTablet
+                        ? HeaderComponent(
+                          lineLogo: line3,
+                          poweredByLogo: logo,
+                          heading: "Sign Registration Card",
+                          contentline: signdetails,
+                        )
+                        : MobHeaderComponent(
+                          lineLogo: line3,
+                          farimontlogo: farimontlogo,
+                          heading: "Sign Registration Card",
+                          contentline: signdetails,
                         ),
-                      ),
-                    ),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 20,
-                    ),
-                    child: MainButton(
-                      buttonText: 'Previous',
-                      onPressed: prevbutton,
-                      btnbg: AppColors.textgreyColor,
-                      btnfg: AppColors.whiteColor,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 20,
-                    ),
-                    child: MainButton(
-                      buttonText: 'Next',
-                      onPressed: nextbutton,
-                      btnbg: AppColors.primaryColor,
-                      btnfg: AppColors.whiteColor,
-                    ),
-                  ),
-                ],
+                    isTablet
+                        ? Signview(
+                          prevPressed: prevbutton,
+                          nextPressed: nextbutton,
+                        )
+                        : SignviewM(),
+                  ],
+                ),
               ),
             ),
           ),
