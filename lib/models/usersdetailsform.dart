@@ -253,6 +253,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                   width: width * 0.43,
                   height: height * 0.06,
                   child: TextFormField(
+                    onTap: _showCountryPicker,
                     controller: widget.onDialCodeChanged,
                     style: const TextStyle(color: Colors.black),
                     keyboardType: TextInputType.text,
@@ -466,6 +467,21 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                   width: width * 0.43,
                   height: height * 0.06,
                   child: TextFormField(
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+
+                      if (pickedDate != null) {
+                        setState(() {
+                          widget.dobController.text =
+                              "${pickedDate.month}/${pickedDate.day}/${pickedDate.year}";
+                        });
+                      }
+                    },
                     controller: widget.dobController,
                     style: const TextStyle(color: Colors.black),
                     keyboardType: TextInputType.datetime,
@@ -534,6 +550,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                   width: width * 0.43,
                   height: height * 0.06,
                   child: TextFormField(
+                    onTap: _showcountryonly,
                     readOnly: true,
                     controller: widget.countryController,
                     style: const TextStyle(color: Colors.black),

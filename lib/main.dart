@@ -1,11 +1,7 @@
 // import 'package:device_preview/device_preview.dart';
-import 'package:whodeenii/views/capturedocuments.dart';
 import 'package:whodeenii/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:whodeenii/views/selectguest.dart';
-import 'package:whodeenii/views/singatureregistration.dart';
-import 'package:whodeenii/views/welcome.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Whodeenii',
-      home: const SignatureRegistration(),
+      home: const LoginPage(),
     );
   }
 }
