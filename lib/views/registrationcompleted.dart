@@ -9,7 +9,7 @@ import 'package:whodeenii/utils/values.dart';
 import 'package:whodeenii/views/selectguest.dart';
 import 'package:whodeenii/views/singatureregistration.dart';
 import 'package:flutter/material.dart';
-import 'package:whodeenii/views/welcome.dart';
+import 'package:whodeenii/views/videoscreen.dart';
 
 class RegistrationCompleted extends StatefulWidget {
   const RegistrationCompleted({super.key});
@@ -44,7 +44,7 @@ class _RegistrationCompletedState extends State<RegistrationCompleted> {
   void handleSubmit() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => WelcomeReg()),
+      MaterialPageRoute(builder: (context) => VideoScreen()),
     );
   }
 

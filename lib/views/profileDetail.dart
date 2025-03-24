@@ -19,6 +19,8 @@ class ProfileDetail extends StatefulWidget {
 }
 
 class _ProfileDetailState extends State<ProfileDetail> {
+  final GlobalKey<FormState> profileFormKey = GlobalKey<FormState>();
+
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
@@ -30,18 +32,20 @@ class _ProfileDetailState extends State<ProfileDetail> {
   String? selectedGender;
 
   void handleSubmit() {
-    print("First Name: ${firstNameController.text}");
-    print("Last Name: ${lastNameController.text}");
-    print("Mobile Number: ${mobileController.text}");
-    print("Email Address: ${emailController.text}");
-    print("Date of Birth: ${dobController.text}");
-    print("Dialing Code: ${dialcodeController.text}");
-    print("Country Name: ${countryController.text}");
-    print("Gender: $selectedGender");
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => CaptureDocuments()),
-    );
+    if (profileFormKey.currentState!.validate()) {
+      print("First Name: ${firstNameController.text}");
+      print("Last Name: ${lastNameController.text}");
+      print("Mobile Number: ${mobileController.text}");
+      print("Email Address: ${emailController.text}");
+      print("Date of Birth: ${dobController.text}");
+      print("Dialing Code: ${dialcodeController.text}");
+      print("Country Name: ${countryController.text}");
+      print("Gender: $selectedGender");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => CaptureDocuments()),
+      );
+    }
   }
 
   @override
@@ -96,6 +100,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                           child:
                               isTablet
                                   ? UserDetailsForm(
+                                    formKey: profileFormKey,
                                     firstNameController: firstNameController,
                                     lastNameController: lastNameController,
                                     mobileController: mobileController,

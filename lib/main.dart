@@ -2,6 +2,8 @@
 import 'package:whodeenii/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:whodeenii/views/profiledetail.dart';
+import 'package:whodeenii/views/registrationcompleted.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Whodeenii',
-      home: const LoginPage(),
+      home: const RegistrationCompleted(),
     );
   }
 }

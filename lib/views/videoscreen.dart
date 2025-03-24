@@ -152,6 +152,17 @@ class _VideoScreenState extends State<VideoScreen> {
                       showControls: false,
                       onInAppWebViewCreated: (controller) {
                         webViewController = controller;
+
+                        webViewController!.addJavaScriptHandler(
+                          handlerName: 'videoState',
+                          callback: (args) {
+                            if (args.isNotEmpty && args[0] == 'playing') {
+                              setState(() {
+                                isVideoLoading = false;
+                              });
+                            }
+                          },
+                        );
                       },
                       onInAppWebViewLoadStart: (controller, url) {
                         setState(() {
@@ -167,7 +178,7 @@ class _VideoScreenState extends State<VideoScreen> {
                   ),
                 ),
               ),
-            if (isVideoLoading && isConnected)
+            if (isVideoLoading && !isConnected)
               const Center(child: CircularProgressIndicator()),
           ],
         ),
