@@ -10,8 +10,9 @@ class MobileView extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController dobController;
   final TextEditingController countryController;
-  final Function(String?) onDialCodeChanged;
+  final TextEditingController onDialCodeChanged;
   final Function(String?) onGenderChanged;
+
   const MobileView({
     super.key,
     required this.firstNameController,

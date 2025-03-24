@@ -16,6 +16,7 @@ class AppColors {
   static Color pink68 = const Color(0xFFF03668);
   static Color pinkColor = const Color(0xFFFF1493);
   static Color gray4959 = const Color(0xFF3D4959);
+  static Color silver95 = const Color(0xFF959595);
 
   static LinearGradient gradientColor = const LinearGradient(
     colors: [Color(0xFFFFA500), Color(0xFFFF1493)],

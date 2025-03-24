@@ -45,7 +45,7 @@ class HeaderComponent extends StatelessWidget {
                 contentline,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: AppColors.gray4959,
+                  color: AppColors.silver95,
                   fontSize: width * 0.012,
                   decoration: TextDecoration.none,
                 ),

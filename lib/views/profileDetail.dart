@@ -19,29 +19,33 @@ class ProfileDetail extends StatefulWidget {
 }
 
 class _ProfileDetailState extends State<ProfileDetail> {
+  final GlobalKey<FormState> profileFormKey = GlobalKey<FormState>();
+
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
+  final TextEditingController dialcodeController = TextEditingController();
 
-  String? selectedDialCode;
   String? selectedGender;
 
   void handleSubmit() {
-    print("First Name: ${firstNameController.text}");
-    print("Last Name: ${lastNameController.text}");
-    print("Mobile Number: ${mobileController.text}");
-    print("Email Address: ${emailController.text}");
-    print("Date of Birth: ${dobController.text}");
-    print("Dialing Code: $selectedDialCode");
-    print("Date of Birth: ${countryController.text}");
-    print("Gender: $selectedGender");
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => CaptureDocuments()),
-    );
+    if (profileFormKey.currentState!.validate()) {
+      print("First Name: ${firstNameController.text}");
+      print("Last Name: ${lastNameController.text}");
+      print("Mobile Number: ${mobileController.text}");
+      print("Email Address: ${emailController.text}");
+      print("Date of Birth: ${dobController.text}");
+      print("Dialing Code: ${dialcodeController.text}");
+      print("Country Name: ${countryController.text}");
+      print("Gender: $selectedGender");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => CaptureDocuments()),
+      );
+    }
   }
 
   @override
@@ -87,19 +91,22 @@ class _ProfileDetailState extends State<ProfileDetail> {
                     Expanded(
                       child: SingleChildScrollView(
                         child: Padding(
-                          padding: EdgeInsets.all(width * 0.022),
+                          padding: EdgeInsets.only(
+                            left: width * 0.02,
+                            bottom: width * 0.02,
+                            top: width * 0.01,
+                            right: width * 0.02,
+                          ),
                           child:
                               isTablet
                                   ? UserDetailsForm(
+                                    formKey: profileFormKey,
                                     firstNameController: firstNameController,
                                     lastNameController: lastNameController,
                                     mobileController: mobileController,
                                     emailController: emailController,
                                     dobController: dobController,
-                                    onDialCodeChanged:
-                                        (value) => setState(
-                                          () => selectedDialCode = value,
-                                        ),
+                                    onDialCodeChanged: dialcodeController,
                                     countryController: countryController,
                                     onGenderChanged:
                                         (value) => setState(
@@ -112,10 +119,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     mobileController: mobileController,
                                     emailController: emailController,
                                     dobController: dobController,
-                                    onDialCodeChanged:
-                                        (value) => setState(
-                                          () => selectedDialCode = value,
-                                        ),
+                                    onDialCodeChanged: dialcodeController,
                                     countryController: countryController,
                                     onGenderChanged:
                                         (value) => setState(
