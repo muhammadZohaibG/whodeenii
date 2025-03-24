@@ -4,6 +4,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:vimeo_video_player/vimeo_video_player.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:whodeenii/views/welcome.dart';
+import 'package:signalr_netcore/signalr_client.dart';
 
 class VideoScreen extends StatefulWidget {
   const VideoScreen({super.key});
@@ -19,6 +20,9 @@ class _VideoScreenState extends State<VideoScreen> {
   InAppWebViewController? webViewController;
   Timer? inactivityTimer;
   Timer? replayTimer;
+  String receivedMessage = "Waiting for messages...";
+  late HubConnection _hubConnection;
+
   StreamSubscription<List<ConnectivityResult>>? connectivitySubscription;
 
   @override
@@ -28,8 +32,34 @@ class _VideoScreenState extends State<VideoScreen> {
     listenToInternetChanges();
     startInactivityTimer();
     startReplayTimer();
+    _initSignalR();
+
+  }
+  void _initSignalR() {
+    // Replace with your SignalR hub URL
+    final connectionUrl = 'https://localhost:44326/notificationhub';
+
+    // Create the HubConnection
+    _hubConnection = HubConnectionBuilder()
+        .withUrl(connectionUrl)
+        .build();
+
+    // Listen for messages from the server
+    _hubConnection.on('ReceiveMessage', _handleMessage);
+
+    // Start the connection
+    _hubConnection.start()?.catchError((error) {
+      print('SignalR connection error: $error');
+    });
   }
 
+  void _handleMessage(List<dynamic>? arguments) {
+    if (arguments != null && arguments.isNotEmpty) {
+      setState(() {
+        receivedMessage = arguments.first.toString();
+      });
+    }
+  }
   void startReplayTimer() {
     replayTimer?.cancel();
     replayTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
@@ -50,6 +80,10 @@ class _VideoScreenState extends State<VideoScreen> {
       }
     });
   }
+
+
+
+
 
   Future<void> checkInternet() async {
     var results = await Connectivity().checkConnectivity();
@@ -133,8 +167,9 @@ class _VideoScreenState extends State<VideoScreen> {
               )
             else
               GestureDetector(
-                behavior: HitTestBehavior.opaque,
+                behavior: HitTestBehavior.translucent,
                 onTap: () {
+                  print("asdjknakndkd");
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => WelcomeReg()),
@@ -145,7 +180,7 @@ class _VideoScreenState extends State<VideoScreen> {
                     width: width,
                     height: height,
                     child: VimeoVideoPlayer(
-                      videoId: '786241143',
+                      videoId: '475418823',
                       isAutoPlay: true,
                       isMuted: true,
                       isLooping: true,
@@ -163,6 +198,7 @@ class _VideoScreenState extends State<VideoScreen> {
                           isVideoLoading = true;
                         });
                       },
+                      
                     ),
                   ),
                 ),
