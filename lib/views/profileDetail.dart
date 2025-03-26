@@ -1,5 +1,3 @@
-// import 'package:whodeenii/views/mobileview.dart';
-// import 'package:whodeenii/views/tabletview.dart';
 import 'package:whodeenii/components/headercomponenet.dart';
 import 'package:whodeenii/components/mainbuttoncomponent.dart';
 import 'package:whodeenii/components/mobHeaderComponent.dart';

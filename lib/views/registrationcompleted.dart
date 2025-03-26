@@ -6,7 +6,7 @@ import 'package:whodeenii/components/mobHeaderComponent.dart';
 import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/utils/values.dart';
-import 'package:whodeenii/views/selectguest.dart';
+import 'package:whodeenii/views/profiledetail.dart';
 import 'package:whodeenii/views/singatureregistration.dart';
 import 'package:flutter/material.dart';
 import 'package:whodeenii/views/videoscreen.dart';
@@ -37,7 +37,7 @@ class _RegistrationCompletedState extends State<RegistrationCompleted> {
   void updatebutton() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SelectGuest()),
+      MaterialPageRoute(builder: (context) => ProfileDetail()),
     );
   }
 

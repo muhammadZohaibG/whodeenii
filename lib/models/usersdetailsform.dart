@@ -1,3 +1,5 @@
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:whodeenii/service/api.dart';
 import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/utils/sizeconf.dart';
@@ -33,6 +35,50 @@ class UserDetailsForm extends StatefulWidget {
 }
 
 class _UserDetailsFormState extends State<UserDetailsForm> {
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProfileData();
+  }
+
+  Future<void> fetchProfileData() async {
+    setState(() => isLoading = true);
+
+    final profile = await Api.fetchProfileFromApi();
+    if (profile != null) {
+      PhoneNumber number = await PhoneNumber.getRegionInfoFromPhoneNumber(
+        profile["mobileNo"],
+      );
+      String? dialCode = number.dialCode;
+      String? isoCode = number.isoCode;
+      String? nationalNumber = number.phoneNumber?.replaceFirst(dialCode!, "");
+
+      widget.firstNameController.text = profile["firstName"].trim();
+      widget.lastNameController.text = profile["lastName"].trim();
+      widget.onDialCodeChanged.text = '+${dialCode!}';
+      widget.mobileController.text = nationalNumber!;
+      widget.countryController.text = isoCode!;
+      widget.emailController.text = profile["email"];
+      widget.dobController.text = profile["dob"].split("T")[0];
+
+      selectedGender =
+          ["Male", "Female", "Other"].contains(profile["gender"])
+              ? profile["gender"]
+              : null;
+
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          print("Inside setState(): ${profile["firstName"]}");
+        });
+      }
+    } else {
+      setState(() => isLoading = false);
+    }
+  }
+
   String? selectedGender;
   String selectedCountryCode = "+27";
   String? selectCountry;
@@ -77,544 +123,539 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     MySize().init(context);
-    return Form(
-      key: widget.formKey,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    setState(() {});
+    return isLoading
+        ? CircularProgressIndicator()
+        : Form(
+          key: widget.formKey,
+          child: Column(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: height * 0.01),
-                    child: SizedBox(
-                      height: MySize.size25,
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: height * 0.01),
+                        child: SizedBox(
+                          height: MySize.size25,
+                          child: Text.rich(
                             TextSpan(
-                              text: "First Name",
-                              style: TextStyle(
-                                fontSize: MySize.size16,
-                                color: AppColors.blackColor,
-                              ),
+                              children: [
+                                TextSpan(
+                                  text: "First Name",
+                                  style: TextStyle(
+                                    fontSize: MySize.size16,
+                                    color: AppColors.blackColor,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: " *",
+                                  style: TextStyle(
+                                    fontSize: MySize.size16,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: " *",
-                              style: TextStyle(
-                                fontSize: MySize.size16,
-                                color: Colors.red,
-                              ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: width * 0.43,
+                        height: height * heightf,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.03),
+                              blurRadius: 6,
+                              offset: Offset(0, 3),
                             ),
                           ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: width * 0.43,
-                    height: height * heightf,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
-                          blurRadius: 6,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          setState(() {
-                            heightf = 0.08;
-                          });
-                          return 'Enter Your First Name';
-                        } else {
-                          heightf = 0.06;
-                          return null;
-                        }
-                      },
-                      controller: widget.firstNameController,
-                      style: const TextStyle(color: Colors.black),
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        hintText: "Enter first name",
-                        hintStyle: TextStyle(color: AppColors.gray300),
-                        errorStyle: TextStyle(height: 0),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Image.asset(user),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: AppColors.whiteColor),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: AppColors.whiteColor),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: AppColors.whiteColor,
-                            width: 2,
-                          ),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: AppColors.whiteColor,
-                            width: 2,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              setState(() {
+                                heightf = 0.08;
+                              });
+                              return 'Enter Your First Name';
+                            } else {
+                              heightf = 0.06;
+                              return null;
+                            }
+                          },
+                          controller: widget.firstNameController,
+                          style: const TextStyle(color: Colors.black),
+                          keyboardType: TextInputType.name,
+                          decoration: InputDecoration(
+                            hintText: "Enter first name",
+                            hintStyle: TextStyle(color: AppColors.gray300),
+                            errorStyle: TextStyle(height: 0),
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Image.asset(user),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor,
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor,
+                                width: 2,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
 
-              SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: height * 0.01),
-                    child: SizedBox(
-                      height: MySize.size25,
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: height * 0.01),
+                        child: SizedBox(
+                          height: MySize.size25,
+                          child: Text.rich(
                             TextSpan(
-                              text: "Last Name",
-                              style: TextStyle(
-                                fontSize: MySize.size16,
-                                color: AppColors.blackColor,
-                              ),
+                              children: [
+                                TextSpan(
+                                  text: "Last Name",
+                                  style: TextStyle(
+                                    fontSize: MySize.size16,
+                                    color: AppColors.blackColor,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: " *",
+                                  style: TextStyle(
+                                    fontSize: MySize.size16,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: " *",
-                              style: TextStyle(
-                                fontSize: MySize.size16,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: width * 0.43,
-                    height: height * heightl,
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          setState(() {
-                            heightl = 0.08;
-                          });
-                          return 'Enter Your Last Name';
-                        } else {
-                          heightl = 0.06;
-                          return null;
-                        }
-                      },
-                      controller: widget.lastNameController,
-                      style: const TextStyle(color: Colors.black),
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        hintText: "Enter last name",
-                        hintStyle: TextStyle(color: AppColors.gray300),
-                        errorStyle: TextStyle(height: 0),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Image.asset(user),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: AppColors.whiteColor,
-                            width: 2,
                           ),
                         ),
                       ),
-                    ),
+                      SizedBox(
+                        width: width * 0.43,
+                        height: height * heightl,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              setState(() {
+                                heightl = 0.08;
+                              });
+                              return 'Enter Your Last Name';
+                            } else {
+                              heightl = 0.06;
+                              return null;
+                            }
+                          },
+                          controller: widget.lastNameController,
+                          style: const TextStyle(color: Colors.black),
+                          keyboardType: TextInputType.name,
+                          decoration: InputDecoration(
+                            hintText: "Enter last name",
+                            hintStyle: TextStyle(color: AppColors.gray300),
+                            errorStyle: TextStyle(height: 0),
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Image.asset(user),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-          SizedBox(height: height * 0.025),
+              SizedBox(height: height * 0.025),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: height * 0.01),
-                    child: SizedBox(
-                      height: MySize.size25,
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: height * 0.01),
+                        child: SizedBox(
+                          height: MySize.size25,
+                          child: Text.rich(
                             TextSpan(
-                              text: "Dialing Codes",
-                              style: TextStyle(
-                                fontSize: MySize.size16,
-                                color: AppColors.blackColor,
-                              ),
+                              children: [
+                                TextSpan(
+                                  text: "Dialing Codes",
+                                  style: TextStyle(
+                                    fontSize: MySize.size16,
+                                    color: AppColors.blackColor,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: " *",
+                                  style: TextStyle(
+                                    fontSize: MySize.size16,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: " *",
-                              style: TextStyle(
-                                fontSize: MySize.size16,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: width * 0.43,
-                    height: height * heightd,
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          setState(() {
-                            heightd = 0.08;
-                          });
-                          return 'Select Your Dialing Code';
-                        } else {
-                          heightd = 0.06;
-                          return null;
-                        }
-                      },
-                      onTap: _showCountryPicker,
-                      controller: widget.onDialCodeChanged,
-                      style: const TextStyle(color: Colors.black),
-                      keyboardType: TextInputType.text,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        hintText: "Country Code(+)",
-                        hintStyle: TextStyle(color: AppColors.gray300),
-                        errorStyle: TextStyle(height: 0),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Image.asset(code),
-                        ),
-                        suffixIcon: IconButton(
-                          onPressed: _showCountryPicker,
-                          icon: Icon(Icons.arrow_drop_down),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: AppColors.whiteColor,
-                            width: 2,
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: height * 0.01),
-                    child: SizedBox(
-                      height: MySize.size25,
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "Mobile Number",
-                              style: TextStyle(
-                                fontSize: MySize.size16,
-                                color: AppColors.blackColor,
+                      SizedBox(
+                        width: width * 0.43,
+                        height: height * heightd,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              setState(() {
+                                heightd = 0.08;
+                              });
+                              return 'Select Your Dialing Code';
+                            } else {
+                              heightd = 0.06;
+                              return null;
+                            }
+                          },
+                          onTap: _showCountryPicker,
+                          controller: widget.onDialCodeChanged,
+                          style: const TextStyle(color: Colors.black),
+                          keyboardType: TextInputType.text,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            hintText: "Country Code(+)",
+                            hintStyle: TextStyle(color: AppColors.gray300),
+                            errorStyle: TextStyle(height: 0),
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Image.asset(code),
+                            ),
+                            suffixIcon: IconButton(
+                              onPressed: _showCountryPicker,
+                              icon: Icon(Icons.arrow_drop_down),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                                width: 2,
                               ),
                             ),
-                            TextSpan(
-                              text: " *",
-                              style: TextStyle(
-                                fontSize: MySize.size16,
-                                color: Colors.red,
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor,
+                                width: 2,
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: width * 0.43,
-                    height: height * heightm,
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          setState(() {
-                            heightm = 0.08;
-                          });
-                          return 'Enter Your Mobile Number';
-                        } else {
-                          heightm = 0.06;
-                          return null;
-                        }
-                      },
-                      controller: widget.mobileController,
-                      style: const TextStyle(color: Colors.black),
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        hintText: "xxx-xxxx-xxx",
-                        hintStyle: TextStyle(color: AppColors.gray300),
-                        errorStyle: TextStyle(height: 0),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Image.asset(telephone),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: AppColors.whiteColor,
-                            width: 2,
                           ),
                         ),
                       ),
-                    ),
+                    ],
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: height * 0.01),
+                        child: SizedBox(
+                          height: MySize.size25,
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "Mobile Number",
+                                  style: TextStyle(
+                                    fontSize: MySize.size16,
+                                    color: AppColors.blackColor,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: " *",
+                                  style: TextStyle(
+                                    fontSize: MySize.size16,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: width * 0.43,
+                        height: height * heightm,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              setState(() {
+                                heightm = 0.08;
+                              });
+                              return 'Enter Your Mobile Number';
+                            } else {
+                              heightm = 0.06;
+                              return null;
+                            }
+                          },
+                          controller: widget.mobileController,
+                          style: const TextStyle(color: Colors.black),
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                            hintText: "xxx-xxxx-xxx",
+                            hintStyle: TextStyle(color: AppColors.gray300),
+                            errorStyle: TextStyle(height: 0),
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Image.asset(telephone),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-          SizedBox(height: height * 0.025),
+              SizedBox(height: height * 0.025),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: height * 0.01),
-                    child: SizedBox(
-                      height: MySize.size25,
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: height * 0.01),
+                        child: SizedBox(
+                          height: MySize.size25,
+                          child: Text.rich(
                             TextSpan(
-                              text: "Email Address",
-                              style: TextStyle(
-                                fontSize: MySize.size16,
-                                color: AppColors.blackColor,
-                              ),
+                              children: [
+                                TextSpan(
+                                  text: "Email Address",
+                                  style: TextStyle(
+                                    fontSize: MySize.size16,
+                                    color: AppColors.blackColor,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: " *",
+                                  style: TextStyle(
+                                    fontSize: MySize.size16,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: " *",
-                              style: TextStyle(
-                                fontSize: MySize.size16,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: width * 0.43,
-                    height: height * heighte,
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          setState(() {
-                            heighte = 0.08;
-                          });
-                          return 'Enter Your Email';
-                        } else if (!RegExp(
-                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                        ).hasMatch(value)) {
-                          setState(() {
-                            heighte = 0.08;
-                          });
-                          return 'Enter a valid email address';
-                        } else {
-                          heighte = 0.06;
-                          return null;
-                        }
-                      },
-                      controller: widget.emailController,
-                      style: const TextStyle(color: Colors.black),
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        hintText: "email@address.com",
-                        hintStyle: TextStyle(color: AppColors.gray300),
-                        errorStyle: TextStyle(height: 0),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Image.asset(email),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: AppColors.whiteColor,
-                            width: 2,
                           ),
                         ),
                       ),
-                    ),
+                      SizedBox(
+                        width: width * 0.43,
+                        height: height * heighte,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              setState(() {
+                                heighte = 0.08;
+                              });
+                              return 'Enter Your Email';
+                            } else if (!RegExp(
+                              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                            ).hasMatch(value)) {
+                              setState(() {
+                                heighte = 0.08;
+                              });
+                              return 'Enter a valid email address';
+                            } else {
+                              heighte = 0.06;
+                              return null;
+                            }
+                          },
+                          controller: widget.emailController,
+                          style: const TextStyle(color: Colors.black),
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            hintText: "email@address.com",
+                            hintStyle: TextStyle(color: AppColors.gray300),
+                            errorStyle: TextStyle(height: 0),
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Image.asset(email),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [],
                   ),
                 ],
               ),
-              SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [],
-              ),
-            ],
-          ),
-          SizedBox(height: height * 0.025),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                height: MySize.size35,
-                child: Text(
-                  "More Details...",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: width * 0.014,
-                  ),
-                ),
-              ),
-              SizedBox(),
-            ],
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(height: height * 0.025),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: height * 0.01),
-                    child: SizedBox(
-                      height: MySize.size25,
-                      child: Text(
-                        "Date of Birth (mm/dd/yyyy)",
-                        style: TextStyle(
-                          fontSize: MySize.size16,
-                          color: AppColors.blackColor,
-                        ),
+                  SizedBox(
+                    height: MySize.size35,
+                    child: Text(
+                      "More Details...",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: width * 0.014,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: width * 0.43,
-                    height: height * heightb,
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          setState(() {
-                            heightb = 0.08;
-                          });
-                          return 'Select Your Date Of Birth';
-                        } else {
-                          heightb = 0.06;
-                          return null;
-                        }
-                      },
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime.now(),
-                        );
-
-                        if (pickedDate != null) {
-                          setState(() {
-                            widget.dobController.text =
-                                "${pickedDate.month}/${pickedDate.day}/${pickedDate.year}";
-                          });
-                        }
-                      },
-                      controller: widget.dobController,
-                      style: const TextStyle(color: Colors.black),
-                      keyboardType: TextInputType.datetime,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        hintText: "01-01-2025",
-                        hintStyle: TextStyle(color: AppColors.gray300),
-                        errorStyle: TextStyle(height: 0),
-                        prefixIcon: GestureDetector(
+                  SizedBox(),
+                ],
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: height * 0.01),
+                        child: SizedBox(
+                          height: MySize.size25,
+                          child: Text(
+                            "Date of Birth (mm/dd/yyyy)",
+                            style: TextStyle(
+                              fontSize: MySize.size16,
+                              color: AppColors.blackColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: width * 0.43,
+                        height: height * heightb,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              setState(() {
+                                heightb = 0.08;
+                              });
+                              return 'Select Your Date Of Birth';
+                            } else {
+                              heightb = 0.06;
+                              return null;
+                            }
+                          },
                           onTap: () async {
                             DateTime? pickedDate = await showDatePicker(
                               context: context,
@@ -622,6 +663,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                               firstDate: DateTime(1900),
                               lastDate: DateTime.now(),
                             );
+
                             if (pickedDate != null) {
                               setState(() {
                                 widget.dobController.text =
@@ -629,216 +671,245 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                               });
                             }
                           },
-                          child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Image.asset(calendar),
-                          ),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: AppColors.whiteColor,
-                            width: 2,
+                          controller: widget.dobController,
+                          style: const TextStyle(color: Colors.black),
+                          keyboardType: TextInputType.datetime,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            hintText: "01-01-2025",
+                            hintStyle: TextStyle(color: AppColors.gray300),
+                            errorStyle: TextStyle(height: 0),
+                            prefixIcon: GestureDetector(
+                              onTap: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime.now(),
+                                );
+                                if (pickedDate != null) {
+                                  setState(() {
+                                    widget.dobController.text =
+                                        "${pickedDate.month}/${pickedDate.day}/${pickedDate.year}";
+                                  });
+                                }
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Image.asset(calendar),
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor,
+                                width: 2,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: height * 0.01),
+                        child: SizedBox(
+                          height: MySize.size25,
+                          child: Text(
+                            "Country",
+                            style: TextStyle(
+                              fontSize: MySize.size16,
+                              color: AppColors.blackColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: width * 0.43,
+                        height: height * heightc,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              setState(() {
+                                heightc = 0.08;
+                              });
+                              return 'Select Your Country';
+                            } else {
+                              heightc = 0.06;
+                              return null;
+                            }
+                          },
+                          onTap: _showcountryonly,
+                          readOnly: true,
+                          controller: widget.countryController,
+                          style: const TextStyle(color: Colors.black),
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                            hintText: "Choose Country",
+                            hintStyle: TextStyle(color: AppColors.gray300),
+                            errorStyle: TextStyle(height: 0),
+                            suffixIcon: IconButton(
+                              onPressed: _showcountryonly,
+                              icon: Icon(Icons.arrow_drop_down),
+                            ),
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Image.asset(circle),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(height: height * 0.025),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: height * 0.01),
-                    child: SizedBox(
-                      height: MySize.size25,
-                      child: Text(
-                        "Country",
-                        style: TextStyle(
-                          fontSize: MySize.size16,
-                          color: AppColors.blackColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: width * 0.43,
-                    height: height * heightc,
-                    child: TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          setState(() {
-                            heightc = 0.08;
-                          });
-                          return 'Select Your Country';
-                        } else {
-                          heightc = 0.06;
-                          return null;
-                        }
-                      },
-                      onTap: _showcountryonly,
-                      readOnly: true,
-                      controller: widget.countryController,
-                      style: const TextStyle(color: Colors.black),
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        hintText: "Choose Country",
-                        hintStyle: TextStyle(color: AppColors.gray300),
-                        errorStyle: TextStyle(height: 0),
-                        suffixIcon: IconButton(
-                          onPressed: _showcountryonly,
-                          icon: Icon(Icons.arrow_drop_down),
-                        ),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Image.asset(circle),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: AppColors.whiteColor,
-                            width: 2,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: height * 0.01),
+                        child: SizedBox(
+                          height: MySize.size25,
+                          child: Text(
+                            "Gender",
+                            style: TextStyle(
+                              fontSize: MySize.size16,
+                              color: AppColors.blackColor,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                      SizedBox(
+                        width: width * 0.43,
+                        height: height * heightg,
+                        child: DropdownButtonFormField<String>(
+                          value: selectedGender,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              setState(() {
+                                heightg = 0.08;
+                              });
+                              return 'Select Gender';
+                            } else {
+                              heightg = 0.06;
+                              return null;
+                            }
+                          },
+                          items:
+                              ["Male", "Female", "Other"]
+                                  .map(
+                                    (String value) => DropdownMenuItem(
+                                      value: value,
+                                      child: Text(value),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedGender = newValue;
+                              widget.onGenderChanged(newValue);
+                            });
+                          },
+                          decoration: InputDecoration(
+                            hintText: "-----",
+                            hintStyle: TextStyle(color: AppColors.gray300),
+                            errorStyle: TextStyle(height: 0),
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Image.asset(gender),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: const Color.fromARGB(255, 204, 203, 203),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: const Color.fromARGB(255, 204, 203, 203),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: const Color.fromARGB(255, 204, 203, 203),
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: AppColors.whiteColor,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [],
                   ),
                 ],
               ),
+              SizedBox(height: 20),
             ],
           ),
-          SizedBox(height: height * 0.025),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: height * 0.01),
-                    child: SizedBox(
-                      height: MySize.size25,
-                      child: Text(
-                        "Gender",
-                        style: TextStyle(
-                          fontSize: MySize.size16,
-                          color: AppColors.blackColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: width * 0.43,
-                    height: height * heightg,
-                    child: DropdownButtonFormField<String>(
-                      value: selectedGender,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          setState(() {
-                            heightg = 0.08;
-                          });
-                          return 'Select Gender';
-                        } else {
-                          heightg = 0.06;
-                          return null;
-                        }
-                      },
-                      items:
-                          ["Male", "Female", "Other"]
-                              .map(
-                                (String value) => DropdownMenuItem(
-                                  value: value,
-                                  child: Text(value),
-                                ),
-                              )
-                              .toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedGender = newValue;
-                          widget.onGenderChanged(newValue);
-                        });
-                      },
-                      decoration: InputDecoration(
-                        hintText: "-----",
-                        hintStyle: TextStyle(color: AppColors.gray300),
-                        errorStyle: TextStyle(height: 0),
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Image.asset(gender),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: const Color.fromARGB(255, 204, 203, 203),
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: const Color.fromARGB(255, 204, 203, 203),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: const Color.fromARGB(255, 204, 203, 203),
-                            width: 2,
-                          ),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: AppColors.whiteColor,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [],
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-        ],
-      ),
-    );
+        );
   }
 }

@@ -1,16 +1,25 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:whodeenii/capturedocumentview/camerawithimage.dart';
+import 'package:whodeenii/capturedocumentview/onlycamera.dart';
 import 'package:whodeenii/components/custombuttoncomponent.dart';
+import 'package:whodeenii/service/api.dart';
 import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/sizeconf.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:whodeenii/views/capturedocuments.dart';
 
 class CaptureDoc extends StatefulWidget {
+  final bool captureimageonce;
   final VoidCallback prevPressed;
   final VoidCallback existingPressed;
   final VoidCallback capPressed;
   final Function(CameraController) onCameraInitialized;
   const CaptureDoc({
     super.key,
+    required this.captureimageonce,
     required this.prevPressed,
     required this.capPressed,
     required this.existingPressed,
@@ -24,31 +33,44 @@ class CaptureDoc extends StatefulWidget {
 class _CaptureDocState extends State<CaptureDoc> {
   CameraController? _cameraController;
   List<CameraDescription>? cameras;
-  bool _isCameraInitialized = false;
+  bool isimageFound = false;
+  Uint8List? bytes;
 
   @override
   void initState() {
     super.initState();
+    getimage();
     _initializeCamera();
   }
 
-  Future<void> _initializeCamera() async {
-    cameras = await availableCameras();
-    _cameraController = CameraController(cameras![0], ResolutionPreset.medium);
-
-    await _cameraController!.initialize();
-    if (!mounted) return;
-
-    setState(() {
-      _isCameraInitialized = true;
-    });
-    widget.onCameraInitialized(_cameraController!);
+  Future<void> getimage() async {
+    final profile = await Api.fetchdocumentfromapi();
+    if (profile != null) {
+      final String base64String = profile['fileContent'];
+      bytes = base64Decode(base64String.split(',').last);
+      if (mounted) {
+        setState(() {
+          isimageFound = true;
+        });
+      }
+    }
   }
 
-  @override
-  void dispose() {
-    _cameraController?.dispose();
-    super.dispose();
+  Future<void> _initializeCamera() async {
+    try {
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        debugPrint("No cameras found");
+        return;
+      }
+      _cameraController = CameraController(cameras[0], ResolutionPreset.medium);
+      await _cameraController!.initialize();
+      if (!mounted) return;
+      setState(() {});
+      widget.onCameraInitialized(_cameraController!);
+    } catch (e) {
+      debugPrint("Error initializing camera: $e");
+    }
   }
 
   @override
@@ -74,91 +96,134 @@ class _CaptureDocState extends State<CaptureDoc> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                SizedBox(height: height * 0.07),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: height * 0.02),
-                      child: Container(
-                        width: width * 0.42,
-                        height: height * 0.45,
-                        decoration: BoxDecoration(
-                          color: AppColors.whiteColor,
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child:
-                            _isCameraInitialized
-                                ? CameraPreview(_cameraController!)
-                                : Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.camera,
-                                      size: 40,
-                                      color: Colors.black54,
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      "Capture ID Doc",
-                                      style: TextStyle(
-                                        fontSize: width * 0.012,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                      ),
+                isimageFound
+                    ? CameraComponent(
+                      onCameraInitialized: widget.onCameraInitialized,
+                      bytes: bytes,
+                    )
+                    : OnlyCameraComponent(
+                      onCameraInitialized: widget.onCameraInitialized,
                     ),
-                    SizedBox(),
-                  ],
-                ),
-                SizedBox(height: 15),
               ],
             ),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.only(
-            top: height * 0.013,
-            left: width * 0.02,
-            right: width * 0.02,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomButton(
-                buttonText: 'Previous',
-                onPressed: widget.prevPressed,
-                btnbg: AppColors.gray4959,
-                btnfg: AppColors.whiteColor,
-                height: height * 0.054,
-                width: width * 0.26,
+        isimageFound
+            ? Padding(
+              padding: EdgeInsets.only(
+                top: height * 0.013,
+                left: width * 0.02,
+                right: width * 0.02,
               ),
-              SizedBox(width: width * 0.02),
-              CustomButton(
-                buttonText: 'Keep Existing',
-                onPressed: widget.existingPressed,
-                btnbg: AppColors.primaryColor,
-                btnfg: AppColors.whiteColor,
-                height: height * 0.054,
-                width: width * 0.26,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomButton(
+                    buttonText: 'Previous',
+                    onPressed: widget.prevPressed,
+                    btnbg: AppColors.gray4959,
+                    btnfg: AppColors.whiteColor,
+                    height: height * 0.054,
+                    width: width * 0.26,
+                  ),
+                  SizedBox(width: width * 0.02),
+                  CustomButton(
+                    buttonText: 'Capture',
+                    onPressed: widget.capPressed,
+                    btnbg: AppColors.blackColor,
+                    btnfg: AppColors.whiteColor,
+                    height: height * 0.054,
+                    width: width * 0.26,
+                  ),
+
+                  SizedBox(width: width * 0.02),
+                  CustomButton(
+                    buttonText: 'Keep Existing',
+                    onPressed: widget.existingPressed,
+                    btnbg: AppColors.primaryColor,
+                    btnfg: AppColors.whiteColor,
+                    height: height * 0.054,
+                    width: width * 0.26,
+                  ),
+                ],
               ),
-              SizedBox(width: width * 0.02),
-              CustomButton(
-                buttonText: 'Capture',
-                onPressed: widget.capPressed,
-                btnbg: AppColors.blackColor,
-                btnfg: AppColors.whiteColor,
-                height: height * 0.054,
-                width: width * 0.26,
+            )
+            : widget.captureimageonce
+            ? Padding(
+              padding: EdgeInsets.only(
+                top: height * 0.013,
+                left: width * 0.02,
+                right: width * 0.02,
               ),
-            ],
-          ),
-        ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomButton(
+                    buttonText: 'Discard',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CaptureDocuments(),
+                        ),
+                      );
+                    },
+                    btnbg: AppColors.gray4959,
+                    btnfg: AppColors.whiteColor,
+                    height: height * 0.054,
+                    width: width * 0.26,
+                  ),
+                  SizedBox(width: width * 0.02),
+                  CustomButton(
+                    buttonText: 'ReCapture',
+                    onPressed: widget.capPressed,
+                    btnbg: AppColors.blackColor,
+                    btnfg: AppColors.whiteColor,
+                    height: height * 0.054,
+                    width: width * 0.26,
+                  ),
+
+                  SizedBox(width: width * 0.02),
+                  CustomButton(
+                    buttonText: 'Continue',
+                    onPressed: widget.existingPressed,
+                    btnbg: AppColors.primaryColor,
+                    btnfg: AppColors.whiteColor,
+                    height: height * 0.054,
+                    width: width * 0.26,
+                  ),
+                ],
+              ),
+            )
+            : Padding(
+              padding: EdgeInsets.only(
+                top: height * 0.013,
+                left: width * 0.02,
+                right: width * 0.02,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomButton(
+                    buttonText: 'Previous',
+                    onPressed: widget.prevPressed,
+                    btnbg: AppColors.gray4959,
+                    btnfg: AppColors.whiteColor,
+                    height: height * 0.054,
+                    width: width * 0.42,
+                  ),
+                  SizedBox(width: width * 0.02),
+                  CustomButton(
+                    buttonText: 'Capture',
+                    onPressed: widget.capPressed,
+                    btnbg: AppColors.primaryColor,
+                    btnfg: AppColors.whiteColor,
+                    height: height * 0.054,
+                    width: width * 0.42,
+                  ),
+                ],
+              ),
+            ),
       ],
     );
   }

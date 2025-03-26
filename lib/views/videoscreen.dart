@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vimeo_video_player/vimeo_video_player.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:whodeenii/views/welcome.dart';
@@ -33,33 +34,56 @@ class _VideoScreenState extends State<VideoScreen> {
     startInactivityTimer();
     startReplayTimer();
     _initSignalR();
-
   }
-  void _initSignalR() {
-    // Replace with your SignalR hub URL
-    final connectionUrl = 'https://localhost:44326/notificationhub';
 
-    // Create the HubConnection
-    _hubConnection = HubConnectionBuilder()
-        .withUrl(connectionUrl)
-        .build();
+  void _initSignalR() async {
+    final connectionUrl = 'http://www.whodenisignalr.local/notificationhub';
 
-    // Listen for messages from the server
-    _hubConnection.on('ReceiveMessage', _handleMessage);
+    _hubConnection = HubConnectionBuilder().withUrl(connectionUrl).build();
 
-    // Start the connection
+    final prefs = await SharedPreferences.getInstance();
+    final id = prefs.getString('id');
+
+    final signalRMethodName = 'HubQueue$id';
+
+    _hubConnection.on(signalRMethodName, _handleMessage);
+
     _hubConnection.start()?.catchError((error) {
       print('SignalR connection error: $error');
     });
   }
 
   void _handleMessage(List<dynamic>? arguments) {
+    print(arguments);
+
     if (arguments != null && arguments.isNotEmpty) {
-      setState(() {
-        receivedMessage = arguments.first.toString();
-      });
+      final payload = arguments.first;
+
+      if (payload is Map<String, dynamic>) {
+        final getProfile = payload['getProfile'] == true;
+
+        if (getProfile) {
+          _fetchProfileData(); // 👈 your custom function
+        }
+
+        // Optional: update UI with the full message
+        setState(() {
+          receivedMessage = payload.toString();
+        });
+      } else {
+        print("Payload is not a valid map.");
+      }
     }
   }
+
+  void _fetchProfileData() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => WelcomeReg()),
+    );
+    // Add your logic to fetch profile, call API, update state, etc.
+  }
+
   void startReplayTimer() {
     replayTimer?.cancel();
     replayTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
@@ -80,10 +104,6 @@ class _VideoScreenState extends State<VideoScreen> {
       }
     });
   }
-
-
-
-
 
   Future<void> checkInternet() async {
     var results = await Connectivity().checkConnectivity();
@@ -209,7 +229,6 @@ class _VideoScreenState extends State<VideoScreen> {
                           isVideoLoading = true;
                         });
                       },
-                      
                     ),
                   ),
                 ),

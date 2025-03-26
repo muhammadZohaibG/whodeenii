@@ -3,7 +3,7 @@ import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/images.dart';
 
 class LoginFormM extends StatefulWidget {
-  final TextEditingController emailController;
+  final TextEditingController usernameController;
   final TextEditingController passwordController;
   final bool rememberMe;
   final Function(bool?) onRememberMeChanged;
@@ -11,7 +11,7 @@ class LoginFormM extends StatefulWidget {
 
   const LoginFormM({
     super.key,
-    required this.emailController,
+    required this.usernameController,
     required this.passwordController,
     required this.rememberMe,
     required this.onRememberMeChanged,
@@ -67,7 +67,7 @@ class _LoginFormMState extends State<LoginFormM> {
           SizedBox(
             width: width * 0.65,
             child: TextField(
-              controller: widget.emailController,
+              controller: widget.usernameController,
               style: const TextStyle(color: Colors.black),
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(

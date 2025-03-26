@@ -4,7 +4,7 @@ import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/utils/sizeconf.dart';
 
 class LoginFormT extends StatefulWidget {
-  final TextEditingController emailController;
+  final TextEditingController usernameController;
   final TextEditingController passwordController;
   final bool rememberMe;
   final bool isLoading;
@@ -13,7 +13,7 @@ class LoginFormT extends StatefulWidget {
 
   const LoginFormT({
     super.key,
-    required this.emailController,
+    required this.usernameController,
     required this.passwordController,
     required this.rememberMe,
     required this.onRememberMeChanged,
@@ -75,15 +75,11 @@ class _LoginFormTState extends State<LoginFormT> {
               child: TextFormField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter an email';
-                  } else if (!RegExp(
-                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                  ).hasMatch(value)) {
-                    return 'Enter a valid email address';
+                    return 'Please enter username';
                   }
                   return null;
                 },
-                controller: widget.emailController,
+                controller: widget.usernameController,
                 style: const TextStyle(color: Colors.black),
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
