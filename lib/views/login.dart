@@ -1,13 +1,12 @@
-import 'dart:convert';
-
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whodeenii/loginviews/mobileview.dart';
 import 'package:whodeenii/loginviews/tabview.dart';
 import 'package:flutter/material.dart';
 import 'package:whodeenii/service/api.dart';
+import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/views/videoscreen.dart';
-import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,35 +21,29 @@ class _LoginPageState extends State<LoginPage> {
   bool isloading = false;
   bool rememberMe = false;
   bool isLoading = false;
-    @override
+  @override
   void initState() {
     super.initState();
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      rememberService(); // Ensures it runs after the widget builds
+      rememberService();
     });
   }
 
-void rememberService() async {
+  void rememberService() async {
+    final prefs = await SharedPreferences.getInstance();
+    final rememberMe = prefs.getString('remember') ?? 'false';
+    final token = prefs.getString('token');
 
-  final prefs = await SharedPreferences.getInstance();
-  final rememberMe = prefs.getString('remember') ?? 'false'; // Default to 'false'
-  final token = prefs.getString('token');
-
-
-  if (rememberMe == 'true' && token != null) {
-    // Navigate to the next screen
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => VideoScreen()),
-    );
+    if (rememberMe == 'true' && token != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => VideoScreen()),
+      );
+    }
   }
-}
-
 
   Future<void> loginfunc() async {
-
-   
     setState(() {
       isLoading = true;
     });
@@ -66,7 +59,7 @@ void rememberService() async {
         isLoading = false;
       });
 
-      if (response != null && response['isRequestSuccessful']==true) {
+      if (response != null && response['isRequestSuccessful'] == true) {
         final successResponse = response['successResponse'];
 
         final prefs = await SharedPreferences.getInstance();
@@ -77,28 +70,73 @@ void rememberService() async {
         await prefs.setString('logo', successResponse['logo']);
         await prefs.setString('remember', rememberMe.toString());
 
-        // Navigate to the next screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => VideoScreen()),
-        );
+        ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(
+            type: ArtSweetAlertType.success,
+            title: "Login Successful!",
+            text: "You have logged in successfully.",
+          ),
+        ).then((_) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => VideoScreen()),
+          );
+        });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed. Please try again.')),
+        ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(
+            type: ArtSweetAlertType.danger,
+            title: "Login Failed",
+            text: "Invalid username or password. Please try again.",
+          ),
         );
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred: $e')),
+      isLoading = false;
+      var dialogKey = GlobalKey<ArtDialogState>();
+      ArtSweetAlert.show(
+        artDialogKey: dialogKey,
+        context: context,
+        artDialogArgs: ArtDialogArgs(
+          type: ArtSweetAlertType.danger,
+          confirmButtonColor: AppColors.gray300,
+          confirmButtonText: "",
+          customColumns: [
+            Text(
+              "Error",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primaryColor,
+              ),
+            ),
+            SizedBox(height: 10),
+            SizedBox(
+              width: 400,
+              child: Text(
+                "An error occurred: $e",
+                textAlign: TextAlign.center,
+                softWrap: true,
+                style: TextStyle(fontSize: 16, color: AppColors.primaryColor),
+              ),
+            ),
+          ],
+          dialogMainAxisSize: MainAxisSize.min,
+          dialogAlignment: Alignment.center,
+          dialogPadding: EdgeInsets.all(20),
+          dialogDecoration: BoxDecoration(
+            color: AppColors.gray300,
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       );
+      Future.delayed(Duration(seconds: 3), () {
+        dialogKey.currentState?.closeDialog();
+      });
     }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -146,12 +184,8 @@ void rememberService() async {
                             });
                           },
                           onLoginPressed: loginfunc,
-                          isLoading: isLoading,
-
                         ),
               ),
-   
-
             ),
           ),
         ],

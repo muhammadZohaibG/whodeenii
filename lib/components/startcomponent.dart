@@ -1,6 +1,9 @@
-import 'package:flutter/material.dart';
+import 'dart:typed_data';
 
-class HeaderWidget extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:whodeenii/sharedpreferences/setvaluespref.dart';
+
+class HeaderWidget extends StatefulWidget {
   final String fairmontLogo;
   final String poweredByLogo;
 
@@ -9,6 +12,28 @@ class HeaderWidget extends StatelessWidget {
     required this.fairmontLogo,
     required this.poweredByLogo,
   });
+
+  @override
+  State<HeaderWidget> createState() => _HeaderWidgetState();
+}
+
+class _HeaderWidgetState extends State<HeaderWidget> {
+  Uint8List? logoBytes;
+
+  @override
+  void initState() {
+    super.initState();
+    loadLogo();
+  }
+
+  Future<void> loadLogo() async {
+    Uint8List? logo = await LogoHelper.getLogoBytes();
+    if (mounted) {
+      setState(() {
+        logoBytes = logo;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +54,10 @@ class HeaderWidget extends StatelessWidget {
                   SizedBox(
                     width: width * 0.3,
                     height: height * 0.2,
-                    child: Image.asset(fairmontLogo),
+                    child:
+                        logoBytes != null
+                            ? Image.memory(logoBytes!)
+                            : CircularProgressIndicator(),
                   ),
                   const Spacer(),
                   Column(
@@ -37,7 +65,7 @@ class HeaderWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
 
                     children: [
-                      Image.asset(poweredByLogo, width: width * 0.02),
+                      Image.asset(widget.poweredByLogo, width: width * 0.02),
                       Text(
                         "Powered by",
                         style: TextStyle(fontSize: width * 0.009),
@@ -57,7 +85,7 @@ class HeaderWidget extends StatelessWidget {
                   SizedBox(
                     width: width * 0.3,
                     height: height * 0.11,
-                    child: Image.asset(fairmontLogo),
+                    child: Image.asset(widget.fairmontLogo),
                   ),
                   SizedBox(),
                 ],

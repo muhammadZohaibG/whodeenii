@@ -1,17 +1,14 @@
-// import 'package:device_preview/device_preview.dart';
 import 'package:whodeenii/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // runApp(DevicePreview(enabled: true, builder: (context) => MyApp()));
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -28,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Whodeenii',
-      home: const LoginPage(),
+      home: LoginPage(),
     );
   }
 }
