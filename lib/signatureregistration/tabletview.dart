@@ -1,8 +1,7 @@
-import 'dart:ui';
-
 import 'package:signature/signature.dart';
 import 'package:whodeenii/components/custombuttoncomponent.dart';
 import 'package:whodeenii/components/dialogbox.dart';
+import 'package:whodeenii/service/api.dart';
 import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/utils/sizeconf.dart';
@@ -23,6 +22,24 @@ class Signview extends StatefulWidget {
 }
 
 class _SignviewState extends State<Signview> {
+  String paragraph = '';
+  bool isLoading = true;
+  Future<void> fetchtermsData() async {
+    final termscondiionsparagraph = await Api.getTermsAndConditions();
+    if (termscondiionsparagraph != null) {
+      isLoading = false;
+      paragraph = termscondiionsparagraph;
+      if (mounted) {
+        setState(() {});
+      }
+      print(termscondiionsparagraph);
+    } else {
+      setState(() {
+        isLoading = true;
+      });
+    }
+  }
+
   final SignatureController _signatureController = SignatureController(
     penStrokeWidth: 3,
     penColor: Colors.black,
@@ -33,6 +50,7 @@ class _SignviewState extends State<Signview> {
   void initState() {
     super.initState();
     initsign();
+    fetchtermsData();
   }
 
   void initsign() async {
@@ -95,7 +113,10 @@ class _SignviewState extends State<Signview> {
                                   builder: (BuildContext context) {
                                     return BlurredDialog(
                                       title: "Registration Card",
-                                      content: signaturevalue,
+                                      content:
+                                          isLoading
+                                              ? signaturevalue
+                                              : paragraph,
                                     );
                                   },
                                 );

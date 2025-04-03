@@ -4,7 +4,7 @@ import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/utils/sizeconf.dart';
 
 class LoginFormT extends StatefulWidget {
-  final TextEditingController emailController;
+  final TextEditingController usernameController;
   final TextEditingController passwordController;
   final bool rememberMe;
   final bool isLoading;
@@ -13,7 +13,7 @@ class LoginFormT extends StatefulWidget {
 
   const LoginFormT({
     super.key,
-    required this.emailController,
+    required this.usernameController,
     required this.passwordController,
     required this.rememberMe,
     required this.onRememberMeChanged,
@@ -75,15 +75,11 @@ class _LoginFormTState extends State<LoginFormT> {
               child: TextFormField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter an email';
-                  } else if (!RegExp(
-                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                  ).hasMatch(value)) {
-                    return 'Enter a valid email address';
+                    return 'Please enter username';
                   }
                   return null;
                 },
-                controller: widget.emailController,
+                controller: widget.usernameController,
                 style: const TextStyle(color: Colors.black),
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
@@ -132,11 +128,14 @@ class _LoginFormTState extends State<LoginFormT> {
                 },
                 controller: widget.passwordController,
                 obscureText: isPasswordVisible,
-                style: const TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black, height: 1.2),
                 decoration: InputDecoration(
                   hintText: "Enter password",
                   hintStyle: TextStyle(color: AppColors.gray300),
-                  prefixIcon: Image.asset(lock),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Image.asset(lock),
+                  ),
                   suffixIcon: IconButton(
                     icon: Icon(
                       isPasswordVisible
@@ -169,7 +168,7 @@ class _LoginFormTState extends State<LoginFormT> {
             ),
             SizedBox(height: 20),
             SizedBox(
-              width: width * 0.3,
+              width: width * 0.32,
               child: Row(
                 children: [
                   Theme(
@@ -190,6 +189,7 @@ class _LoginFormTState extends State<LoginFormT> {
                   Text(
                     "Remember Me",
                     style: TextStyle(
+                      height: 1.2,
                       fontSize: 14,
                       color: Colors.black.withOpacity(0.7),
                       fontWeight: FontWeight.w400,

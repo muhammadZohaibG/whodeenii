@@ -1,12 +1,17 @@
+import 'package:custom_linear_progress_indicator/custom_linear_progress_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whodeenii/components/confirmbuttoncomp.dart';
 import 'package:whodeenii/components/confirmtextcomponent.dart';
 import 'package:whodeenii/components/startcomponent.dart';
 import 'package:whodeenii/components/textcomponent.dart';
+import 'package:whodeenii/service/navigationservice.dart';
 import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/utils/values.dart';
+import 'package:whodeenii/views/capturedocuments.dart';
 import 'package:whodeenii/views/profiledetail.dart';
 import 'package:flutter/material.dart';
+import 'package:whodeenii/views/singatureregistration.dart';
 
 class WelcomeReg extends StatefulWidget {
   const WelcomeReg({super.key});
@@ -17,25 +22,43 @@ class WelcomeReg extends StatefulWidget {
 
 class _WelcomeRegState extends State<WelcomeReg> {
   bool isloading = false;
-  void onConfirmedPressed() {
+  void onConfirmedPressed() async {
     setState(() {
       isloading = true;
     });
-    Future.delayed(Duration(seconds: 3), () {
-      setState(() {
-        isloading = false;
-      });
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ProfileDetail()),
-      );
+
+    await Future.delayed(Duration(seconds: 3));
+
+    setState(() {
+      isloading = false;
     });
+
+    final prefs = await SharedPreferences.getInstance();
+
+    Widget? nextScreen;
+
+    if ((prefs.getBool('profileview') ?? false) == true) {
+      nextScreen = ProfileDetail();
+    } else if ((prefs.getBool('documentview') ?? false) == true) {
+      nextScreen = CaptureDocuments();
+    } else if ((prefs.getBool('signatureview') ?? false) == true) {
+      nextScreen = SignatureRegistration();
+    }
+
+    if (nextScreen != null) {
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => nextScreen!),
+      // );
+      NavigationService.pushReplacement(nextScreen);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
+    late double progressPercent = 3;
     return Scaffold(
       body: Stack(
         children: [
@@ -96,14 +119,38 @@ class _WelcomeRegState extends State<WelcomeReg> {
                                                 left: width * 0.2,
                                                 right: width * 0.2,
                                               ),
-                                              child: LinearProgressIndicator(
-                                                minHeight: 8,
+                                              child: CustomLinearProgressIndicator(
+                                                maxValue: 3,
+                                                value: progressPercent,
+                                                minHeight: height * 0.02,
+                                                borderWidth: width * 0.001,
+                                                borderColor: AppColors.gray4959,
+                                                borderStyle: BorderStyle.solid,
+                                                colorLinearProgress:
+                                                    AppColors.primaryColor,
+                                                animationDuration: 1000,
+                                                borderRadius: 20,
+                                                linearProgressBarBorderRadius:
+                                                    15,
                                                 backgroundColor:
                                                     AppColors.gray300,
-                                                valueColor:
-                                                    AlwaysStoppedAnimation(
-                                                      AppColors.primaryColor,
+                                                progressAnimationCurve:
+                                                    Curves.ease,
+                                                alignment: Alignment.center,
+                                                percentTextStyle:
+                                                    const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
+                                                gradientColors: [
+                                                  AppColors.primaryColor,
+                                                ],
+                                                onProgressChanged: (
+                                                  double value,
+                                                ) {
+                                                  // new
+                                                  // log('Progress: $value');
+                                                },
                                               ),
                                             ),
                                             SizedBox(height: height * 0.02),

@@ -1,13 +1,17 @@
+import 'dart:io';
+import 'package:whodeenii/service/api.dart';
 import 'package:camera/camera.dart';
 import 'package:whodeenii/capturedocumentview/mobileview.dart';
 import 'package:whodeenii/capturedocumentview/tabletview.dart';
 import 'package:whodeenii/components/headercomponenet.dart';
 import 'package:whodeenii/components/mobHeaderComponent.dart';
+import 'package:whodeenii/service/navigationservice.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/utils/values.dart';
 import 'package:whodeenii/views/profiledetail.dart';
 import 'package:whodeenii/views/singatureregistration.dart';
 import 'package:flutter/material.dart';
+import 'package:art_sweetalert/art_sweetalert.dart';
 
 class CaptureDocuments extends StatefulWidget {
   const CaptureDocuments({super.key});
@@ -18,19 +22,14 @@ class CaptureDocuments extends StatefulWidget {
 
 class _CaptureDocumentsState extends State<CaptureDocuments> {
   CameraController? _cameraController;
+  bool captureonce = false;
   void testsub() {}
   void prevbutton() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => ProfileDetail()),
-    );
+    NavigationService.pushReplacement(ProfileDetail());
   }
 
   void nextbutton() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => SignatureRegistration()),
-    );
+    NavigationService.pushReplacement(SignatureRegistration());
   }
 
   void _onCameraControllerInitialized(CameraController controller) {
@@ -44,6 +43,34 @@ class _CaptureDocumentsState extends State<CaptureDocuments> {
       try {
         final XFile image = await _cameraController!.takePicture();
         debugPrint("Captured Image Path: ${image.path}");
+        File imageFile = File(image.path);
+        bool success = await Api.uploadDocumentImage(imageFile);
+        if (success) {
+          ArtSweetAlert.show(
+            context: context,
+            artDialogArgs: ArtDialogArgs(
+              type: ArtSweetAlertType.success,
+              title: "Success",
+              text: "Image uploaded successfully!",
+            ),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => CaptureDocuments()),
+          );
+          setState(() {});
+        } else {
+          ArtSweetAlert.show(
+            context: context,
+            artDialogArgs: ArtDialogArgs(
+              type: ArtSweetAlertType.danger,
+              title: "Error",
+              text: "Image upload failed",
+            ),
+          );
+        }
+        captureonce = true;
+        setState(() {});
       } catch (e) {
         debugPrint("Error capturing image: $e");
       }
@@ -96,6 +123,7 @@ class _CaptureDocumentsState extends State<CaptureDocuments> {
                           existingPressed: nextbutton,
                           capPressed: _captureImage,
                           onCameraInitialized: _onCameraControllerInitialized,
+                          captureimageonce: captureonce,
                         )
                         : CaptureDocM(
                           prevPressed: prevbutton,

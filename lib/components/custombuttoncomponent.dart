@@ -23,7 +23,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MySize().init(context);
-    return Container(
+    return SizedBox(
       width: width,
       height: height,
       child: ElevatedButton(

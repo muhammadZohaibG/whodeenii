@@ -1,5 +1,6 @@
 import 'package:whodeenii/components/headercomponenet.dart';
 import 'package:whodeenii/components/mobHeaderComponent.dart';
+import 'package:whodeenii/service/navigationservice.dart';
 import 'package:whodeenii/signatureregistration/mobileview.dart';
 import 'package:whodeenii/signatureregistration/tabletview.dart';
 import 'package:whodeenii/utils/images.dart';
@@ -16,19 +17,12 @@ class SignatureRegistration extends StatefulWidget {
 }
 
 class _SignatureRegistrationState extends State<SignatureRegistration> {
-  void testsub() {}
   void prevbutton() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => CaptureDocuments()),
-    );
+    NavigationService.pushReplacement(CaptureDocuments());
   }
 
   void nextbutton() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => RegistrationCompleted()),
-    );
+    NavigationService.pushReplacement(RegistrationCompleted());
   }
 
   @override

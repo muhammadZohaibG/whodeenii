@@ -1,9 +1,10 @@
-// import 'package:whodeenii/views/mobileview.dart';
-// import 'package:whodeenii/views/tabletview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whodeenii/components/headercomponenet.dart';
 import 'package:whodeenii/components/mainbuttoncomponent.dart';
 import 'package:whodeenii/components/mobHeaderComponent.dart';
 import 'package:whodeenii/models/usersdetailsform.dart';
+import 'package:whodeenii/service/api.dart';
+import 'package:whodeenii/service/navigationservice.dart';
 import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/models/mobileview.dart';
@@ -27,12 +28,17 @@ class _ProfileDetailState extends State<ProfileDetail> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
+  final TextEditingController countryCodeController = TextEditingController();
   final TextEditingController dialcodeController = TextEditingController();
+  final TextEditingController genderController = TextEditingController();
 
   String? selectedGender;
 
-  void handleSubmit() {
+  void handleSubmit() async {
     if (profileFormKey.currentState!.validate()) {
+      final prefs = await SharedPreferences.getInstance();
+      final genderid = prefs.getString('guestid');
+      final reservationid = prefs.getString('reservationid');
       print("First Name: ${firstNameController.text}");
       print("Last Name: ${lastNameController.text}");
       print("Mobile Number: ${mobileController.text}");
@@ -40,11 +46,28 @@ class _ProfileDetailState extends State<ProfileDetail> {
       print("Date of Birth: ${dobController.text}");
       print("Dialing Code: ${dialcodeController.text}");
       print("Country Name: ${countryController.text}");
-      print("Gender: $selectedGender");
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => CaptureDocuments()),
-      );
+      print("Gender: ${genderController.text}");
+
+      bool isUpdated = await Api.updateProfile({
+        "guestId": genderid,
+        "reservationId": reservationid,
+        "firstName": firstNameController.text,
+        "lastName": lastNameController.text,
+        "mobileNo": mobileController.text,
+        "dialingCode": dialcodeController.text,
+        "email": emailController.text,
+        "dateOfBirth": dobController.text,
+        "country": countryController.text,
+        "countryCode": countryCodeController.text,
+        "gender": genderController.text,
+      });
+
+      if (isUpdated) {
+        print("Profile updated successfully!");
+      } else {
+        print("Profile update failed.");
+      }
+      NavigationService.pushReplacement(CaptureDocuments());
     }
   }
 
@@ -107,11 +130,10 @@ class _ProfileDetailState extends State<ProfileDetail> {
                                     emailController: emailController,
                                     dobController: dobController,
                                     onDialCodeChanged: dialcodeController,
+                                    countryCodeController:
+                                        countryCodeController,
                                     countryController: countryController,
-                                    onGenderChanged:
-                                        (value) => setState(
-                                          () => selectedGender = value,
-                                        ),
+                                    genderController: genderController,
                                   )
                                   : MobileView(
                                     firstNameController: firstNameController,

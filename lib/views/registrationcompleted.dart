@@ -1,12 +1,15 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whodeenii/completereservation/mobileview.dart';
 import 'package:whodeenii/completereservation/tabview.dart';
 import 'package:whodeenii/components/headercomponenet.dart';
 import 'package:whodeenii/components/mainbuttoncomponent.dart';
 import 'package:whodeenii/components/mobHeaderComponent.dart';
+import 'package:whodeenii/service/navigationservice.dart';
+import 'package:whodeenii/service/signalrservice.dart';
 import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/images.dart';
 import 'package:whodeenii/utils/values.dart';
-import 'package:whodeenii/views/selectguest.dart';
+import 'package:whodeenii/views/profiledetail.dart';
 import 'package:whodeenii/views/singatureregistration.dart';
 import 'package:flutter/material.dart';
 import 'package:whodeenii/views/videoscreen.dart';
@@ -19,33 +22,24 @@ class RegistrationCompleted extends StatefulWidget {
 }
 
 class _RegistrationCompletedState extends State<RegistrationCompleted> {
-  void testsub() {}
+  final SignalRService _signalRService = SignalRService();
   void prevbutton() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => SignatureRegistration()),
-    );
-  }
-
-  void nextbutton() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => RegistrationCompleted()),
-    );
+    NavigationService.pushReplacement(SignatureRegistration());
   }
 
   void updatebutton() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => SelectGuest()),
-    );
+    NavigationService.pushReplacement(ProfileDetail());
   }
 
-  void handleSubmit() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => VideoScreen()),
-    );
+  void handleSubmit() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userid = prefs.getString('userid');
+    final Map<String, dynamic> sendResponse = {
+      "Identifier": userid,
+      "Status": "Completed",
+    };
+    await _signalRService.invokeMethod("ReturnAcknowledgement", sendResponse);
+    NavigationService.pushReplacement(VideoScreen());
   }
 
   @override

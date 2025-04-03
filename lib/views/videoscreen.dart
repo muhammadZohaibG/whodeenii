@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vimeo_video_player/vimeo_video_player.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:whodeenii/service/navigationservice.dart';
+import 'package:whodeenii/service/signalrservice.dart';
+import 'package:whodeenii/utils/urls.dart';
 import 'package:whodeenii/views/welcome.dart';
-import 'package:signalr_netcore/signalr_client.dart';
 
 class VideoScreen extends StatefulWidget {
   const VideoScreen({super.key});
@@ -14,6 +17,7 @@ class VideoScreen extends StatefulWidget {
 }
 
 class _VideoScreenState extends State<VideoScreen> {
+  final SignalRService _signalRService = SignalRService();
   bool isVideoLoading = false;
   bool isConnected = true;
   bool isplay = true;
@@ -21,7 +25,6 @@ class _VideoScreenState extends State<VideoScreen> {
   Timer? inactivityTimer;
   Timer? replayTimer;
   String receivedMessage = "Waiting for messages...";
-  late HubConnection _hubConnection;
 
   StreamSubscription<List<ConnectivityResult>>? connectivitySubscription;
 
@@ -33,57 +36,74 @@ class _VideoScreenState extends State<VideoScreen> {
     startInactivityTimer();
     startReplayTimer();
     _initSignalR();
-
-  }
-  void _initSignalR() {
-    // Replace with your SignalR hub URL
-    final connectionUrl = 'https://localhost:44326/notificationhub';
-
-    // Create the HubConnection
-    _hubConnection = HubConnectionBuilder()
-        .withUrl(connectionUrl)
-        .build();
-
-    // Listen for messages from the server
-    _hubConnection.on('ReceiveMessage', _handleMessage);
-
-    // Start the connection
-    _hubConnection.start()?.catchError((error) {
-      print('SignalR connection error: $error');
-    });
   }
 
-  void _handleMessage(List<dynamic>? arguments) {
+  void _initSignalR() async {
+    final connectionUrl = newsignalurl;
+    final prefs = await SharedPreferences.getInstance();
+    final id = prefs.getString('id');
+    final signalRMethodName = 'HubQueue$id';
+    await _signalRService.initializeConnection(connectionUrl);
+    _signalRService.addListener(signalRMethodName, _handleMessage);
+  }
+
+  Future<void> _handleMessage(List<dynamic>? arguments) async {
     if (arguments != null && arguments.isNotEmpty) {
-      setState(() {
-        receivedMessage = arguments.first.toString();
-      });
+      final payload = arguments.first;
+      if (payload is Map<String, dynamic>) {
+        final getProfile = payload['getProfile'] == true;
+        final getIdDocument = payload['getIdDocument'] == true;
+        final getSignature = payload['getSignature'] == true;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('profileview', getProfile);
+        await prefs.setBool('documentview', getIdDocument);
+        await prefs.setBool('signatureview', getSignature);
+        await prefs.setString('reservationid', payload['reservationId']);
+        await prefs.setString('action', payload['action']);
+        await prefs.setString('userid', payload['userId']);
+
+        final Map<String, dynamic> sendResponse = {
+          "Identifier": payload['userId'],
+          "Status": "Started",
+        };
+        if (getProfile || getIdDocument || getSignature) {
+          await _signalRService.invokeMethod(
+            "ReturnAcknowledgement",
+            sendResponse,
+          );
+          _fetchProfileData();
+        }
+        setState(() {
+          receivedMessage = payload.toString();
+        });
+      } else {
+        print("Payload is not a valid map.");
+      }
     }
   }
+
+  void _fetchProfileData() {
+    NavigationService.pushReplacement(WelcomeReg());
+  }
+
   void startReplayTimer() {
     replayTimer?.cancel();
-    replayTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+    replayTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (isConnected && webViewController != null) {
         webViewController!.evaluateJavascript(
           source: '''
-          player.getDuration().then(function(duration) {
-            player.setCurrentTime(duration - 0.1).then(function() {
-              player.pause().then(function() {
-                player.setCurrentTime(0).then(function() {
-                  player.play();
-                });
-              });
-            });
-          });
-        ''',
+        player.getPaused().then(function(isPaused) {
+          if (isPaused) {
+            player.play();
+          }
+        }).catch(function(error) {
+          console.log("Error checking video state:", error);
+        });
+      ''',
         );
       }
     });
   }
-
-
-
-
 
   Future<void> checkInternet() async {
     var results = await Connectivity().checkConnectivity();
@@ -167,36 +187,34 @@ class _VideoScreenState extends State<VideoScreen> {
               )
             else
               GestureDetector(
-                behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  print("asdjknakndkd");
-                  Navigator.pushReplacement(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => WelcomeReg()),
                   );
                 },
+                behavior: HitTestBehavior.translucent,
+
                 child: IgnorePointer(
                   child: SizedBox(
                     width: width,
                     height: height,
                     child: VimeoVideoPlayer(
-                      videoId: '475418823',
+                      videoId: videoId,
                       isAutoPlay: true,
                       isMuted: true,
                       isLooping: true,
                       showControls: false,
                       onInAppWebViewCreated: (controller) {
                         webViewController = controller;
-
-                        webViewController!.addJavaScriptHandler(
-                          handlerName: 'videoState',
-                          callback: (args) {
-                            if (args.isNotEmpty && args[0] == 'playing') {
-                              setState(() {
-                                isVideoLoading = false;
-                              });
-                            }
-                          },
+                        controller.setOptions(
+                          options: InAppWebViewGroupOptions(
+                            android: AndroidInAppWebViewOptions(
+                              mixedContentMode:
+                                  AndroidMixedContentMode
+                                      .MIXED_CONTENT_ALWAYS_ALLOW,
+                            ),
+                          ),
                         );
                       },
                       onInAppWebViewLoadStart: (controller, url) {
@@ -209,7 +227,6 @@ class _VideoScreenState extends State<VideoScreen> {
                           isVideoLoading = true;
                         });
                       },
-                      
                     ),
                   ),
                 ),
