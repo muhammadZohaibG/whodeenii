@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import 'package:shared_preferences/shared_preferences.dart';
+=======
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
 import 'package:whodeenii/service/api.dart';
 import 'package:whodeenii/utils/colors.dart';
 import 'package:whodeenii/utils/images.dart';
@@ -50,6 +54,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
 
     final profile = await Api.fetchProfileFromApi();
     if (profile != null) {
+<<<<<<< HEAD
       if (profile["mobileNo"] != null) {
         widget.mobileController.text = profile["mobileNo"];
       }
@@ -76,10 +81,32 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
           ["Male", "Female", "Other"].contains(profile["gender"])
               ? profile["gender"]
               : "";
+=======
+      PhoneNumber number = await PhoneNumber.getRegionInfoFromPhoneNumber(
+        profile["mobileNo"],
+      );
+      String? dialCode = number.dialCode;
+      String? isoCode = number.isoCode;
+      String? nationalNumber = number.phoneNumber?.replaceFirst(dialCode!, "");
+
+      widget.firstNameController.text = profile["firstName"].trim();
+      widget.lastNameController.text = profile["lastName"].trim();
+      widget.onDialCodeChanged.text = '+${dialCode!}';
+      widget.mobileController.text = nationalNumber!;
+      widget.countryController.text = isoCode!;
+      widget.emailController.text = profile["email"];
+      widget.dobController.text = profile["dob"].split("T")[0];
+
+      selectedGender =
+          ["Male", "Female", "Other"].contains(profile["gender"])
+              ? profile["gender"]
+              : null;
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
 
       if (mounted) {
         setState(() {
           isLoading = false;
+<<<<<<< HEAD
         });
       }
 
@@ -87,6 +114,11 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('guestid', profile["guestId"]);
       }
+=======
+          print("Inside setState(): ${profile["firstName"]}");
+        });
+      }
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
     } else {
       setState(() => isLoading = false);
     }
@@ -202,10 +234,14 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                             }
                           },
                           controller: widget.firstNameController,
+<<<<<<< HEAD
                           style: const TextStyle(
                             color: Colors.black,
                             height: 1.2,
                           ),
+=======
+                          style: const TextStyle(color: Colors.black),
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
                           keyboardType: TextInputType.name,
                           decoration: InputDecoration(
                             hintText: "Enter first name",
@@ -295,10 +331,14 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                             }
                           },
                           controller: widget.lastNameController,
+<<<<<<< HEAD
                           style: const TextStyle(
                             color: Colors.black,
                             height: 1.2,
                           ),
+=======
+                          style: const TextStyle(color: Colors.black),
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
                           keyboardType: TextInputType.name,
                           decoration: InputDecoration(
                             hintText: "Enter last name",
@@ -390,10 +430,14 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                           },
                           onTap: _showCountryPicker,
                           controller: widget.onDialCodeChanged,
+<<<<<<< HEAD
                           style: const TextStyle(
                             color: Colors.black,
                             height: 1.2,
                           ),
+=======
+                          style: const TextStyle(color: Colors.black),
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
                           keyboardType: TextInputType.text,
                           readOnly: true,
                           decoration: InputDecoration(
@@ -483,10 +527,14 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                             }
                           },
                           controller: widget.mobileController,
+<<<<<<< HEAD
                           style: const TextStyle(
                             color: Colors.black,
                             height: 1.2,
                           ),
+=======
+                          style: const TextStyle(color: Colors.black),
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
                           keyboardType: TextInputType.phone,
                           decoration: InputDecoration(
                             hintText: "xxx-xxxx-xxx",
@@ -584,10 +632,14 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                             }
                           },
                           controller: widget.emailController,
+<<<<<<< HEAD
                           style: const TextStyle(
                             color: Colors.black,
                             height: 1.2,
                           ),
+=======
+                          style: const TextStyle(color: Colors.black),
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             hintText: "email@address.com",
@@ -701,10 +753,14 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                             }
                           },
                           controller: widget.dobController,
+<<<<<<< HEAD
                           style: const TextStyle(
                             color: Colors.black,
                             height: 1.2,
                           ),
+=======
+                          style: const TextStyle(color: Colors.black),
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
                           keyboardType: TextInputType.datetime,
                           readOnly: true,
                           decoration: InputDecoration(
@@ -795,10 +851,14 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                           onTap: _showcountryonly,
                           readOnly: true,
                           controller: widget.countryController,
+<<<<<<< HEAD
                           style: const TextStyle(
                             color: Colors.black,
                             height: 1.2,
                           ),
+=======
+                          style: const TextStyle(color: Colors.black),
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
                           keyboardType: TextInputType.phone,
                           decoration: InputDecoration(
                             hintText: "Choose Country",
@@ -867,6 +927,7 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                         width: width * 0.43,
                         height: height * heightg,
                         child: DropdownButtonFormField<String>(
+<<<<<<< HEAD
                           style: const TextStyle(
                             color: Colors.black,
                             height: 1.2,
@@ -875,6 +936,9 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                               widget.genderController.text.isNotEmpty
                                   ? widget.genderController.text
                                   : null,
+=======
+                          value: selectedGender,
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               setState(() {
@@ -896,11 +960,18 @@ class _UserDetailsFormState extends State<UserDetailsForm> {
                                   )
                                   .toList(),
                           onChanged: (String? newValue) {
+<<<<<<< HEAD
                             if (newValue != null) {
                               setState(() {
                                 widget.genderController.text = newValue;
                               });
                             }
+=======
+                            setState(() {
+                              selectedGender = newValue;
+                              widget.onGenderChanged(newValue);
+                            });
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
                           },
                           decoration: InputDecoration(
                             hintText: "-----",

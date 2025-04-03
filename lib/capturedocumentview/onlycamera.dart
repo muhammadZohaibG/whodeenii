@@ -23,6 +23,7 @@ class _OnlyCameraComponentState extends State<OnlyCameraComponent> {
   }
 
   Future<void> _initializeCamera() async {
+<<<<<<< HEAD
     try {
       cameras = await availableCameras();
       _cameraController = CameraController(
@@ -40,10 +41,26 @@ class _OnlyCameraComponentState extends State<OnlyCameraComponent> {
     } catch (e) {
       print("Error initializing camera: $e");
     }
+=======
+    cameras = await availableCameras();
+    _cameraController = CameraController(cameras![0], ResolutionPreset.medium);
+
+    await _cameraController!.initialize();
+    if (!mounted) return;
+
+    setState(() {
+      _isCameraInitialized = true;
+    });
+    widget.onCameraInitialized(_cameraController!);
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
   }
 
   @override
   void dispose() {
+<<<<<<< HEAD
+=======
+    _cameraController?.dispose();
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
     super.dispose();
   }
 

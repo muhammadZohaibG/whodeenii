@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

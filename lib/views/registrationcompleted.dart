@@ -28,7 +28,10 @@ class _RegistrationCompletedState extends State<RegistrationCompleted> {
   }
 
   void updatebutton() {
-    NavigationService.pushReplacement(ProfileDetail());
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SelectGuest()),
+    );
   }
 
   void handleSubmit() async {

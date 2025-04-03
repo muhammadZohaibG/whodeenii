@@ -44,6 +44,10 @@ class _CameraComponentState extends State<CameraComponent> {
 
   @override
   void dispose() {
+<<<<<<< HEAD
+=======
+    _cameraController?.dispose();
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
     super.dispose();
   }
 
@@ -77,7 +81,11 @@ class _CameraComponentState extends State<CameraComponent> {
             ),
         SizedBox(width: width * 0.01),
         Container(
+<<<<<<< HEAD
           width: width * 0.25,
+=======
+          width: width * 0.2,
+>>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
           height: height * 0.25,
           decoration: BoxDecoration(
             color: AppColors.whiteColor,

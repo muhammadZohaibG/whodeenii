@@ -38,52 +38,28 @@ class _VideoScreenState extends State<VideoScreen> {
     _initSignalR();
   }
 
-  void _initSignalR() async {
-    final connectionUrl = newsignalurl;
-    final prefs = await SharedPreferences.getInstance();
-    final id = prefs.getString('id');
-    final signalRMethodName = 'HubQueue$id';
-    await _signalRService.initializeConnection(connectionUrl);
-    _signalRService.addListener(signalRMethodName, _handleMessage);
+  void _initSignalR() {
+    // Replace with your SignalR hub URL
+    final connectionUrl = 'https://localhost:44326/notificationhub';
+
+    // Create the HubConnection
+    _hubConnection = HubConnectionBuilder().withUrl(connectionUrl).build();
+
+    // Listen for messages from the server
+    _hubConnection.on('ReceiveMessage', _handleMessage);
+
+    // Start the connection
+    _hubConnection.start()?.catchError((error) {
+      print('SignalR connection error: $error');
+    });
   }
 
-  Future<void> _handleMessage(List<dynamic>? arguments) async {
+  void _handleMessage(List<dynamic>? arguments) {
     if (arguments != null && arguments.isNotEmpty) {
-      final payload = arguments.first;
-      if (payload is Map<String, dynamic>) {
-        final getProfile = payload['getProfile'] == true;
-        final getIdDocument = payload['getIdDocument'] == true;
-        final getSignature = payload['getSignature'] == true;
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('profileview', getProfile);
-        await prefs.setBool('documentview', getIdDocument);
-        await prefs.setBool('signatureview', getSignature);
-        await prefs.setString('reservationid', payload['reservationId']);
-        await prefs.setString('action', payload['action']);
-        await prefs.setString('userid', payload['userId']);
-
-        final Map<String, dynamic> sendResponse = {
-          "Identifier": payload['userId'],
-          "Status": "Started",
-        };
-        if (getProfile || getIdDocument || getSignature) {
-          await _signalRService.invokeMethod(
-            "ReturnAcknowledgement",
-            sendResponse,
-          );
-          _fetchProfileData();
-        }
-        setState(() {
-          receivedMessage = payload.toString();
-        });
-      } else {
-        print("Payload is not a valid map.");
-      }
+      setState(() {
+        receivedMessage = arguments.first.toString();
+      });
     }
-  }
-
-  void _fetchProfileData() {
-    NavigationService.pushReplacement(WelcomeReg());
   }
 
   void startReplayTimer() {
