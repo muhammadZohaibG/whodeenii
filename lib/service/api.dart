@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
-<<<<<<< HEAD
-import 'package:http/http.dart' as interceptor;
+import 'package:http/http.dart' as _interceptor;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:whodeenii/service/navigationservice.dart';
 import 'package:whodeenii/utils/urls.dart';
@@ -11,14 +10,6 @@ import 'package:whodeenii/views/login.dart';
 
 class Api {
   final String _baseUrl = baseurl;
-=======
-import 'package:http/http.dart' as _interceptor;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:whodeenii/utils/urls.dart';
-
-class Api {
-  static const String _baseUrl = baseurl;
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
 
   Future<Map<String, dynamic>?> login(String username, String password) async {
     final url = Uri.parse('$_baseUrl/Kiosk/authenticatekiosk');
@@ -46,7 +37,7 @@ class Api {
     final url = Uri.parse('$_baseUrl/$endpoint');
 
     try {
-      final response = await interceptor.get(url);
+      final response = await _interceptor.get(url);
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
@@ -57,7 +48,6 @@ class Api {
     }
   }
 
-<<<<<<< HEAD
   static Future<bool> updateProfile(Map<String, dynamic> updatedData) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -108,18 +98,11 @@ class Api {
     final token = prefs.getString('token');
     final reservationid = prefs.getString('reservationid');
     final String apiUrl = '$baseurl$profiledetailurl';
-=======
-  static Future<Map<String, dynamic>?> fetchProfileFromApi() async {
-    const String apiUrl = profiledetailurl;
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
 
     if (token == null) {
       print("Error: No token found in SharedPreferences");
       return null;
     }
-<<<<<<< HEAD
     final Map<String, dynamic> requestBody = {
       "reservationId": reservationid,
       "guestId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -128,22 +111,12 @@ class Api {
     print("URl: $apiUrl");
     try {
       final response = await http.post(
-=======
-
-    print("Using Token: $token");
-
-    try {
-      final response = await http.get(
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
         Uri.parse(apiUrl),
         headers: {
           "Authorization": "Bearer $token",
           "Content-Type": "application/json",
         },
-<<<<<<< HEAD
         body: jsonEncode(requestBody),
-=======
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
       );
 
       print("Response Status Code: ${response.statusCode}");
@@ -154,13 +127,10 @@ class Api {
         if (data["isRequestSuccessful"] == true) {
           return data["successResponse"];
         }
-<<<<<<< HEAD
       } else if (response.statusCode == 401) {
         await prefs.setString('remember', 'false');
         NavigationService.pushReplacement(LoginPage());
         return null;
-=======
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
       } else {
         throw Exception(
           "Failed to load profile data. Status Code: ${response.statusCode}",
@@ -174,16 +144,10 @@ class Api {
   }
 
   static Future<Map<String, dynamic>?> fetchdocumentfromapi() async {
-<<<<<<< HEAD
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final reservationid = prefs.getString('reservationid');
     final String apiUrl = '$baseurl$getdocumenturl$reservationid';
-=======
-    const String apiUrl = getdocumenturl;
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
 
     if (token == null) {
       print("Error: No token found in SharedPreferences");
@@ -204,13 +168,10 @@ class Api {
         if (data["isRequestSuccessful"] == true) {
           return data["successResponse"];
         }
-<<<<<<< HEAD
       } else if (response.statusCode == 401) {
         await prefs.setString('remember', 'false');
         NavigationService.pushReplacement(LoginPage());
         return null;
-=======
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
       } else {
         throw Exception(
           "Failed to load profile data. Status Code: ${response.statusCode}",
@@ -224,17 +185,10 @@ class Api {
   }
 
   static Future<bool> uploadDocumentImage(File imageFile) async {
-<<<<<<< HEAD
     final String apiUrl = '$baseurl$uploaddocumenturl';
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final reservationid = prefs.getString('reservationid');
-=======
-    const String apiUrl = uploaddocumenturl;
-
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
 
     if (token == null) {
       print("Error: No token found in SharedPreferences");
@@ -245,11 +199,7 @@ class Api {
       request.headers["Authorization"] = "Bearer $token";
       request.headers['Accept'] = 'application/json';
       request.headers['Content-Type'] = 'multipart/form-data';
-<<<<<<< HEAD
       request.fields['ReservationNumber'] = reservationid!;
-=======
-      request.fields['ReservationNumber'] = '666666';
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
 
       var fileStream = await http.MultipartFile.fromPath(
         'IdDocument',
@@ -261,13 +211,10 @@ class Api {
       if (response.statusCode == 200) {
         print("Image uploaded successfully!");
         return true;
-<<<<<<< HEAD
       } else if (response.statusCode == 401) {
         await prefs.setString('remember', 'false');
         NavigationService.pushReplacement(LoginPage());
         return false;
-=======
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
       } else {
         print("Failed to upload image. Status Code: ${response.statusCode}");
         return false;
@@ -277,7 +224,6 @@ class Api {
       return false;
     }
   }
-<<<<<<< HEAD
 
   static Future<Map<String, dynamic>?> completereservationdetails() async {
     final prefs = await SharedPreferences.getInstance();
@@ -374,6 +320,4 @@ class Api {
 
     return null;
   }
-=======
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
 }

@@ -4,7 +4,6 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vimeo_video_player/vimeo_video_player.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:whodeenii/service/navigationservice.dart';
 import 'package:whodeenii/service/signalrservice.dart';
 import 'package:whodeenii/utils/urls.dart';
 import 'package:whodeenii/views/welcome.dart';
@@ -38,28 +37,54 @@ class _VideoScreenState extends State<VideoScreen> {
     _initSignalR();
   }
 
-  void _initSignalR() {
-    // Replace with your SignalR hub URL
-    final connectionUrl = 'https://localhost:44326/notificationhub';
+  void _initSignalR() async {
+    final prefs = await SharedPreferences.getInstance();
+    final id = prefs.getString('id');
+    if (id == null) return;
 
-    // Create the HubConnection
-    _hubConnection = HubConnectionBuilder().withUrl(connectionUrl).build();
+    final String connectionUrl =
+        "http://www.whodenisignalr.local/notificationhub";
+    await _signalRService.initializeConnection(connectionUrl);
 
-    // Listen for messages from the server
-    _hubConnection.on('ReceiveMessage', _handleMessage);
-
-    // Start the connection
-    _hubConnection.start()?.catchError((error) {
-      print('SignalR connection error: $error');
-    });
+    _signalRService.addListener("HubQueue$id", _handleMessage);
   }
 
-  void _handleMessage(List<dynamic>? arguments) {
-    if (arguments != null && arguments.isNotEmpty) {
-      setState(() {
-        receivedMessage = arguments.first.toString();
-      });
+  Future<void> _handleMessage(List<dynamic>? arguments) async {
+    if (arguments == null || arguments.isEmpty) return;
+
+    final payload = arguments.first;
+    if (payload is Map<String, dynamic>) {
+      final getProfile = payload['getProfile'] == true;
+      final getIdDocument = payload['getIdDocument'] == true;
+      final getSignature = payload['getSignature'] == true;
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('profileview', getProfile);
+      await prefs.setBool('documentview', getIdDocument);
+      await prefs.setBool('signatureview', getSignature);
+      await prefs.setString('reservationid', payload['reservationId']);
+      await prefs.setString('action', payload['action']);
+
+      final Map<String, dynamic> sendResponse = {
+        "Identifier": payload['userId'],
+        "Status": "Started",
+      };
+
+      if (getProfile || getIdDocument || getSignature) {
+        await _signalRService.invokeMethod(
+          "ReturnAcknowledgement",
+          sendResponse,
+        );
+        _fetchProfileData();
+      }
     }
+  }
+
+  void _fetchProfileData() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => WelcomeReg()),
+    );
   }
 
   void startReplayTimer() {

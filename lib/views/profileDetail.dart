@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import 'package:shared_preferences/shared_preferences.dart';
-=======
->>>>>>> 1c600426ad08da41803022fce53fbc0d30571805
 import 'package:whodeenii/components/headercomponenet.dart';
 import 'package:whodeenii/components/mainbuttoncomponent.dart';
 import 'package:whodeenii/components/mobHeaderComponent.dart';

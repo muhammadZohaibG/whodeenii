@@ -30,7 +30,7 @@ class _RegistrationCompletedState extends State<RegistrationCompleted> {
   void updatebutton() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SelectGuest()),
+      MaterialPageRoute(builder: (context) => ProfileDetail()),
     );
   }
 
